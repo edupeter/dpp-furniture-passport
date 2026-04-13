@@ -1,243 +1,197 @@
-// ─── Furniture DPP Viewer App ───
-const SECTIONS_ORDER = [
-  'productIdentification',
-  'materialComposition',
-  'chemicalSafety',
-  'carbonFootprint',
-  'durability',
-  'repairability',
-  'circularityAndDisassembly',
-  'packaging',
-  'supplyChain',
-  'complianceAndDigital'
-];
-
-let dppData = null;
-
-window.addEventListener('DOMContentLoaded', () => {
-  fetch('data/dpp.json')
-    .then(r => r.json())
-    .then(data => {
-      dppData = data;
-      renderAll();
-    })
-    .catch(e => {
-      document.getElementById('app').innerHTML = `<div style="padding:2rem;color:#dc2626;">Error cargando datos: ${e.message}</div>`;
-    });
-});
-
-function renderAll() {
-  // Meta
-  const meta = dppData._meta;
-  document.getElementById('dpp-id').textContent =
-    `DPP ID: ${meta.dppStatus?.value || 'draft'} · v${meta.version} · ${meta.generatedDate}`;
-  document.getElementById('footer-version').textContent = meta.version;
-  document.getElementById('footer-date').textContent = meta.generatedDate;
-
-  // Count statuses
-  const counts = { confirmed: 0, partial: 0, assumed: 0, pending: 0 };
-  countStatuses(dppData, counts);
-  document.getElementById('count-confirmed').textContent = counts.confirmed;
-  document.getElementById('count-partial').textContent = counts.partial;
-  document.getElementById('count-assumed').textContent = counts.assumed;
-  document.getElementById('count-pending').textContent = counts.pending;
-
-  // Render sections
-  const app = document.getElementById('app');
-  app.innerHTML = '';
-  SECTIONS_ORDER.forEach(key => {
-    if (!dppData[key]) return;
-    const section = dppData[key];
-    const icon = section._icon || '📄';
-    const title = section._title || formatLabel(key);
-    app.appendChild(buildSection(icon, title, section));
-  });
-}
-
-function countStatuses(obj, counts) {
-  if (!obj || typeof obj !== 'object') return;
-  if (Array.isArray(obj)) {
-    obj.forEach(item => countStatuses(item, counts));
-    return;
-  }
-  if (obj._status && counts[obj._status] !== undefined) {
-    counts[obj._status]++;
-  }
-  for (const key of Object.keys(obj)) {
-    if (key.startsWith('_')) continue;
-    countStatuses(obj[key], counts);
-  }
-}
-
-function buildSection(icon, title, data) {
-  const section = document.createElement('div');
-  section.className = 'section';
-
-  const header = document.createElement('div');
-  header.className = 'section-header';
-  header.innerHTML = `<span class="icon">${icon}</span><h2>${title}</h2><span class="chevron">▾</span>`;
-
-  const body = document.createElement('div');
-  body.className = 'section-body';
-
-  header.onclick = () => {
-    header.classList.toggle('collapsed');
-    body.classList.toggle('hidden');
+const DPP = (() => {
+  const STATUS_MAP = {
+    verified: { label: 'Verificado', cls: 'st-verified', icon: 'V' },
+    partial: { label: 'Parcial', cls: 'st-partial', icon: 'P' },
+    pending: { label: 'Pendiente', cls: 'st-pending', icon: 'X' },
+    assumed: { label: 'Asumido', cls: 'st-assumed', icon: '-' }
   };
+  const LEGAL_CLS = { 'LEY': 'legal-ley', 'PROYECCION': 'legal-proyeccion', 'PENDIENTE AD': 'legal-pendiente' };
 
-  renderFieldsView(body, data);
-  section.appendChild(header);
-  section.appendChild(body);
-  return section;
-}
+  function legalClass(basis) {
+    if (!basis) return '';
+    for (const [k,v] of Object.entries(LEGAL_CLS)) { if (basis.includes(k)) return v; }
+    return '';
+  }
+  function statusBadge(s) {
+    const m = STATUS_MAP[s] || STATUS_MAP.pending;
+    return '<span class="status-badge ' + m.cls + '">' + m.icon + ' ' + m.label + '</span>';
+  }
+  function humanKey(key) {
+    return key.replace(/([A-Z])/g, ' $1').replace(/^./, function(c){ return c.toUpperCase(); }).replace(/_/g, ' ');
+  }
+  function formatValue(val) {
+    if (val === null || val === undefined) return '<span class="no-data">-- sin datos --</span>';
+    if (Array.isArray(val)) return val.length ? val.join(', ') : '<span class="no-data">-- vacio --</span>';
+    if (typeof val === 'boolean') return val ? 'Si' : 'No';
+    return String(val);
+  }
 
-function renderFieldsView(container, obj) {
-  for (const key of Object.keys(obj)) {
-    if (key.startsWith('_')) continue;
-    const val = obj[key];
-
-    if (Array.isArray(val)) {
-      renderArrayView(container, key, val);
-    } else if (val && typeof val === 'object' && ('value' in val || '_status' in val || 'url' in val)) {
-      renderLeafField(container, key, val);
-    } else if (val && typeof val === 'object') {
-      // Sub-group
-      const sub = document.createElement('div');
-      sub.className = 'sub-title';
-      sub.textContent = formatLabel(key);
-      container.appendChild(sub);
-      renderFieldsView(container, val);
+  function renderAttribute(key, attr) {
+    if (key.startsWith('_')) return '';
+    var metaKeys = ['_status','_legalBasis','_sourceDocument','_evidence','_note'];
+    var dataFields = '';
+    Object.keys(attr).forEach(function(k) {
+      if (metaKeys.indexOf(k) >= 0) return;
+      dataFields += '<span class="field-name">' + humanKey(k) + ':</span> ' + formatValue(attr[k]) + '<br>';
+    });
+    var status = statusBadge(attr._status);
+    var lCls = legalClass(attr._legalBasis);
+    var docHTML = '';
+    if (attr._sourceDocument) {
+      var d = attr._sourceDocument;
+      docHTML = '<div class="source-doc"><span class="doc-icon">DOC</span><div class="doc-info">' +
+        '<strong>' + (d.name||'--') + '</strong>' +
+        '<span class="doc-type">' + (d.type||'') + '</span>' +
+        '<span class="doc-gen">Genera: ' + (d.generatedBy||'--') + '</span>' +
+        '<span class="doc-deadline">Plazo: ' + (d.deadline||'--') + '</span>' +
+        '</div></div>';
     }
-  }
-}
-
-function renderLeafField(container, key, field) {
-  const div = document.createElement('div');
-  div.className = 'field';
-
-  const row = document.createElement('div');
-  row.className = 'field-row';
-
-  const left = document.createElement('div');
-
-  const label = document.createElement('div');
-  label.className = 'field-label';
-  let labelText = formatLabel(key);
-  if (field.unit) labelText += ` (${field.unit})`;
-  label.textContent = labelText;
-  left.appendChild(label);
-
-  // Value
-  const valDiv = document.createElement('div');
-  const displayVal = field.value !== null && field.value !== undefined
-    ? String(field.value)
-    : (field.url || null);
-
-  if (displayVal !== null) {
-    valDiv.className = 'field-value';
-    if (field.url && displayVal.startsWith('http')) {
-      valDiv.innerHTML = `<a href="${displayVal}" target="_blank" style="color:#2e7d4f;">${displayVal}</a>`;
-    } else {
-      valDiv.textContent = displayVal;
-    }
-  } else {
-    valDiv.className = 'field-value null-val';
-    valDiv.textContent = 'Sin dato';
-  }
-  left.appendChild(valDiv);
-
-  // Note
-  if (field._note) {
-    const note = document.createElement('div');
-    note.className = 'field-note';
-    note.textContent = field._note;
-    left.appendChild(note);
-  }
-
-  // Extra fields
-  const extras = ['address', 'country', 'species', 'certification', 'licenseNumber',
-    'testMethod', 'limit', 'scope', 'dataQuality', 'category', 'conditions',
-    'methodology', 'tools', 'estimatedTime', 'cpcCode', 'programOperator',
-    'validUntil', 'accreditationNumber', 'accreditedBy', 'dataCarrier',
-    'present', 'concentration', 'trainingCompliance', 'notified', 'scipNumber',
-    'compliant', 'declarationDate', 'available', 'eudrCompliant', 'geoLocation',
-    'harvestDate', 'dueDiligenceStatement', 'cs3dCompliant', 'reportUrl',
-    'tier1Suppliers', 'recyclingRate', 'landfillRate', 'incinerationRate',
-    'containsSVHC', 'yearsPostSale', 'width', 'depth', 'height', 'seatHeight',
-    'dataType'];
-  extras.forEach(k => {
-    if (field[k] !== undefined && field[k] !== null) {
-      const extra = document.createElement('div');
-      extra.className = 'field-note';
-      extra.innerHTML = `<strong>${formatLabel(k)}:</strong> ${field[k]}`;
-      left.appendChild(extra);
-    }
-  });
-
-  row.appendChild(left);
-
-  // Status badge
-  if (field._status) {
-    const badge = document.createElement('span');
-    badge.className = 'status ' + field._status;
-    const labels = { confirmed: 'Confirmado', partial: 'Parcial', assumed: 'Supuesto', pending: 'Pendiente' };
-    badge.textContent = labels[field._status] || field._status;
-    row.appendChild(badge);
-  }
-
-  div.appendChild(row);
-  container.appendChild(div);
-}
-
-function renderArrayView(container, key, arr) {
-  if (!arr.length) return;
-  const sub = document.createElement('div');
-  sub.className = 'sub-title';
-  sub.textContent = `${formatLabel(key)} (${arr.length})`;
-  container.appendChild(sub);
-
-  arr.forEach((item, i) => {
-    if (typeof item === 'object' && item !== null) {
-      for (const k of Object.keys(item)) {
-        if (k.startsWith('_')) continue;
-        const v = item[k];
-        if (v && typeof v === 'object' && ('value' in v || '_status' in v)) {
-          renderLeafField(container, k, v);
-        } else if (v !== null && v !== undefined && typeof v !== 'object') {
-          const div = document.createElement('div');
-          div.className = 'field';
-          const row = document.createElement('div');
-          row.className = 'field-row';
-          const left = document.createElement('div');
-          const label = document.createElement('div');
-          label.className = 'field-label';
-          label.textContent = formatLabel(k);
-          left.appendChild(label);
-          const valDiv = document.createElement('div');
-          valDiv.className = 'field-value';
-          valDiv.textContent = String(v);
-          left.appendChild(valDiv);
-          row.appendChild(left);
-          if (item._status) {
-            const badge = document.createElement('span');
-            badge.className = 'status ' + item._status;
-            const labels = { confirmed: 'Confirmado', partial: 'Parcial', assumed: 'Supuesto', pending: 'Pendiente' };
-            badge.textContent = labels[item._status] || item._status;
-            row.appendChild(badge);
-          }
-          div.appendChild(row);
-          container.appendChild(div);
-        }
+    var evidenceHTML = '';
+    if (attr._evidence) {
+      var e = attr._evidence;
+      if (e.blockchainTxHash) {
+        var sh = e.blockchainTxHash.length > 16 ? e.blockchainTxHash.slice(0,8) + '...' + e.blockchainTxHash.slice(-6) : e.blockchainTxHash;
+        evidenceHTML = '<div class="trackline-badge verified"><span class="tl-icon">CHAIN</span><div class="tl-info">' +
+          '<strong>Trackline verificado</strong>' +
+          '<span class="tl-hash" title="' + e.blockchainTxHash + '">Tx: ' + sh + '</span>' +
+          '<span class="tl-pid">Proceso: ' + (e.tracklineProcessId||'--') + '</span>' +
+          '<span class="tl-date">Fecha: ' + (e.registeredDate||'--') + '</span>' +
+          '<span class="tl-by">Por: ' + (e.registeredBy||'--') + '</span>' +
+          '</div></div>';
+      } else {
+        evidenceHTML = '<div class="trackline-badge pending"><span class="tl-icon">CHAIN</span><span class="tl-pending">Sin evidencia blockchain</span></div>';
       }
     }
-  });
-}
+    var legalPill = attr._legalBasis ? '<span class="legal-pill ' + lCls + '" title="' + attr._legalBasis + '">' + attr._legalBasis + '</span>' : '';
+    var noteHTML = attr._note ? '<div class="attr-note">' + attr._note + '</div>' : '';
+    return '<div class="attribute" data-status="' + (attr._status||'pending') + '">' +
+      '<div class="attr-header"><h3>' + humanKey(key) + '</h3>' + status + '</div>' +
+      '<div class="attr-body">' +
+      '<div class="attr-data">' + dataFields + '</div>' +
+      legalPill + noteHTML + docHTML + evidenceHTML +
+      '</div></div>';
+  }
 
-function formatLabel(key) {
-  return key
-    .replace(/([A-Z])/g, ' $1')
-    .replace(/^./, s => s.toUpperCase())
-    .replace(/_/g, ' ')
-    .replace(/  +/g, ' ')
-    .trim();
-}
+  function renderSection(sectionKey, section) {
+    var icon = section._icon || 'SEC';
+    var title = section._title || humanKey(sectionKey);
+    var attrsHTML = '';
+    var counts = { verified:0, partial:0, pending:0 };
+    Object.keys(section).forEach(function(k) {
+      if (k.startsWith('_')) return;
+      attrsHTML += renderAttribute(k, section[k]);
+      var st = section[k]._status || 'pending';
+      counts[st] = (counts[st]||0) + 1;
+    });
+    return '<section class="dpp-section" id="sec-' + sectionKey + '">' +
+      '<div class="section-header" onclick="DPP.toggleSection(\'' + sectionKey + '\')">' +
+      '<span class="section-icon">' + icon + '</span>' +
+      '<h2>' + title + '</h2>' +
+      '<div class="section-counts">' +
+      '<span class="cnt cnt-v">' + counts.verified + '</span>' +
+      '<span class="cnt cnt-pa">' + counts.partial + '</span>' +
+      '<span class="cnt cnt-pe">' + counts.pending + '</span>' +
+      '</div>' +
+      '<span class="chevron" id="chev-' + sectionKey + '">V</span>' +
+      '</div>' +
+      '<div class="section-body" id="body-' + sectionKey + '">' + attrsHTML + '</div>' +
+      '</section>';
+  }
+
+  function renderMeta(meta) {
+    return '<div class="dpp-meta">' +
+      '<div class="meta-row"><strong>Esquema:</strong> ' + meta.schema + '</div>' +
+      '<div class="meta-row"><strong>Regulacion:</strong> ' + meta.regulation + '</div>' +
+      '<div class="meta-row"><strong>Version:</strong> ' + meta.version + ' - ' + meta.generatedDate + '</div>' +
+      '<div class="meta-row"><strong>Estado DPP:</strong> ' + (meta.dppStatus?meta.dppStatus.value:'--') + ' - Granularidad: ' + (meta.dppGranularity?meta.dppGranularity.value:'--') + '</div>' +
+      '<div class="meta-row"><strong>Evidencia:</strong> ' + meta.evidenceProvider + '</div>' +
+      '</div>';
+  }
+
+  function renderSummary(data) {
+    var total=0, verified=0, partial=0, pending=0;
+    Object.keys(data).forEach(function(sk) {
+      if (sk === '_meta') return;
+      Object.keys(data[sk]).forEach(function(ak) {
+        if (ak.startsWith('_')) return;
+        total++;
+        var st = data[sk][ak]._status;
+        if (st === 'verified') verified++;
+        else if (st === 'partial') partial++;
+        else pending++;
+      });
+    });
+    var pct = total ? Math.round((verified/total)*100) : 0;
+    var dashLen = Math.PI * 100;
+    var dashOff = dashLen * (1 - pct/100);
+    return '<div class="dpp-summary">' +
+      '<div class="summary-ring">' +
+      '<svg viewBox="0 0 120 120">' +
+      '<circle cx="60" cy="60" r="50" class="ring-bg"/>' +
+      '<circle cx="60" cy="60" r="50" class="ring-fill" stroke-dasharray="' + dashLen + '" stroke-dashoffset="' + dashOff + '"/>' +
+      '</svg>' +
+      '<span class="ring-label">' + pct + '%</span>' +
+      '</div>' +
+      '<div class="summary-stats">' +
+      '<div class="summary-title">Progreso DPP</div>' +
+      '<div class="stat"><span class="dot dot-v"></span> Verificados: <strong>' + verified + '</strong></div>' +
+      '<div class="stat"><span class="dot dot-pa"></span> Parciales: <strong>' + partial + '</strong></div>' +
+      '<div class="stat"><span class="dot dot-pe"></span> Pendientes: <strong>' + pending + '</strong></div>' +
+      '<div class="stat-total">Total atributos: ' + total + '</div>' +
+      '</div></div>';
+  }
+
+  async function init(jsonPath, containerId) {
+    var container = document.getElementById(containerId);
+    container.innerHTML = '<div class="loading">Cargando DPP...</div>';
+    try {
+      var res = await fetch(jsonPath);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      var data = await res.json();
+      window._dppData = data;
+      var html = renderMeta(data._meta) + renderSummary(data);
+      html += '<div class="filter-bar">' +
+        '<button class="filter-btn active" data-filter="all">Todos</button>' +
+        '<button class="filter-btn" data-filter="verified">Verificados</button>' +
+        '<button class="filter-btn" data-filter="partial">Parciales</button>' +
+        '<button class="filter-btn" data-filter="pending">Pendientes</button>' +
+        '</div>';
+      Object.keys(data).forEach(function(k) {
+        if (k === '_meta') return;
+        html += renderSection(k, data[k]);
+      });
+      container.innerHTML = html;
+      bindFilters();
+    } catch(err) {
+      container.innerHTML = '<div class="error">Error cargando DPP: ' + err.message + '</div>';
+    }
+  }
+
+  function bindFilters() {
+    document.querySelectorAll('.filter-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        var f = btn.dataset.filter;
+        document.querySelectorAll('.attribute').forEach(function(el) {
+          if (f === 'all') { el.style.display = ''; return; }
+          el.style.display = (el.dataset.status === f) ? '' : 'none';
+        });
+      });
+    });
+  }
+
+  function toggleSection(key) {
+    var body = document.getElementById('body-' + key);
+    var chev = document.getElementById('chev-' + key);
+    if (body.classList.contains('collapsed')) {
+      body.classList.remove('collapsed');
+      chev.textContent = 'V';
+    } else {
+      body.classList.add('collapsed');
+      chev.textContent = '>';
+    }
+  }
+
+  return { init: init, toggleSection: toggleSection };
+})();

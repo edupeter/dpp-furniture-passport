@@ -3,160 +3,140 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Furniture Passport · DPP Mueble</title>
+<title>DPP Mueble - Pasaporte Digital de Producto</title>
 <style>
-  :root {
-    --green: #2e7d4f;
-    --green-light: #e8f5ee;
-    --green-mid: #4caf7d;
-    --gray: #f5f5f5;
-    --dark: #1a1a2e;
-    --text: #333;
-    --border: #e0e0e0;
-    --confirmed: #2e7d4f;
-    --partial: #f59e0b;
-    --assumed: #3b82f6;
-    --pending: #9ca3af;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f4f0; color: var(--text); }
-
-  .header {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16423c 100%);
-    color: white; padding: 28px 20px 24px; text-align: center; position: relative;
-  }
-  .header .badge {
-    display: inline-block; background: var(--green-mid); color: white;
-    font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
-    padding: 4px 10px; border-radius: 20px; margin-bottom: 12px;
-  }
-  .header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
-  .header p { font-size: 13px; opacity: 0.75; }
-  .header .dpp-id {
-    margin-top: 14px; background: rgba(255,255,255,0.1); border-radius: 8px;
-    padding: 10px 14px; font-size: 11px; opacity: 0.85; font-family: monospace; letter-spacing: 0.5px;
-  }
-  .header .edit-link {
-    position: absolute; top: 14px; right: 16px;
-    background: rgba(255,255,255,0.15); color: white; text-decoration: none;
-    padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600;
-    transition: background 0.2s;
-  }
-  .header .edit-link:hover { background: rgba(255,255,255,0.25); }
-
-  .legend {
-    display: flex; flex-wrap: wrap; gap: 8px; padding: 14px 16px;
-    background: white; border-bottom: 1px solid var(--border); justify-content: center;
-  }
-  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #555; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-
-  .section { margin: 12px 12px 0; }
-  .section-header {
-    display: flex; align-items: center; gap: 10px; padding: 14px 16px;
-    background: var(--green); color: white; border-radius: 12px 12px 0 0;
-    cursor: pointer; user-select: none;
-  }
-  .section-header .icon { font-size: 18px; }
-  .section-header h2 { font-size: 14px; font-weight: 600; flex: 1; }
-  .section-header .chevron { font-size: 12px; transition: transform 0.2s; }
-  .section-header.collapsed .chevron { transform: rotate(-90deg); }
-  .section-body {
-    background: white; border-radius: 0 0 12px 12px;
-    border: 1px solid var(--border); border-top: none; overflow: hidden;
-  }
-  .section-body.hidden { display: none; }
-
-  .field {
-    padding: 12px 16px; border-bottom: 1px solid #f0f0f0;
-    display: flex; flex-direction: column; gap: 4px;
-  }
-  .field:last-child { border-bottom: none; }
-  .field-label { font-size: 11px; color: #888; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
-  .field-value { font-size: 14px; color: var(--dark); font-weight: 500; line-height: 1.4; }
-  .field-value.null-val { color: #bbb; font-style: italic; font-weight: 400; font-size: 13px; }
-  .field-value a { color: var(--green); text-decoration: none; }
-  .field-value a:hover { text-decoration: underline; }
-  .field-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-  .field-note { font-size: 11px; color: #999; margin-top: 2px; line-height: 1.4; }
-
-  .status {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 12px;
-    white-space: nowrap; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.5px;
-  }
-  .status.confirmed { background: #e8f5ee; color: var(--confirmed); }
-  .status.partial   { background: #fef3c7; color: #b45309; }
-  .status.assumed    { background: #eff6ff; color: #1d4ed8; }
-  .status.pending    { background: #f3f4f6; color: #6b7280; }
-
-  .summary {
-    margin: 12px; background: white; border-radius: 12px;
-    border: 1px solid var(--border); padding: 16px;
-  }
-  .summary h3 { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 12px; }
-  .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-  .summary-item { text-align: center; padding: 10px 6px; border-radius: 10px; }
-  .summary-item .num { font-size: 22px; font-weight: 800; }
-  .summary-item .lbl { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
-  .summary-item.c  { background: #e8f5ee; color: var(--confirmed); }
-  .summary-item.p  { background: #fef3c7; color: #b45309; }
-  .summary-item.a  { background: #eff6ff; color: #1d4ed8; }
-  .summary-item.pe { background: #f3f4f6; color: #6b7280; }
-
-  .sub-title {
-    padding: 10px 16px 6px; font-size: 11px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.8px;
-    color: var(--green); background: var(--green-light);
-  }
-
-  .footer {
-    text-align: center; padding: 20px 16px 32px;
-    font-size: 11px; color: #aaa; line-height: 1.6;
-  }
-  .footer strong { color: #888; }
-
-  @media (max-width: 500px) {
-    .summary-grid { grid-template-columns: repeat(2, 1fr); }
-  }
+:root{--bg:#f5f7fa;--card:#fff;--border:#e2e8f0;--text:#1a202c;--muted:#718096;--accent:#2b6cb0;--green:#38a169;--amber:#d69e2e;--red:#e53e3e;--gray:#a0aec0;--purple:#6b46c1}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.app-header{background:linear-gradient(135deg,#1a365d,#2b6cb0);color:#fff;padding:2rem;text-align:center}
+.app-header h1{font-size:1.8rem;margin-bottom:.25rem}
+.app-header p{opacity:.85;font-size:.95rem}
+.header-badges{margin-top:1rem;display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap}
+.header-badges span{background:rgba(255,255,255,.15);padding:.25rem .75rem;border-radius:20px;font-size:.8rem}
+.nav-bar{background:var(--card);border-bottom:1px solid var(--border);padding:.75rem 2rem;display:flex;gap:1rem;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.nav-links{display:flex;gap:.5rem}
+.nav-links a{text-decoration:none;color:var(--accent);font-weight:600;font-size:.9rem;padding:.4rem .8rem;border-radius:6px}
+.nav-links a:hover{background:#ebf4ff}
+.nav-links a.active{background:var(--accent);color:#fff}
+.json-selector{display:flex;align-items:center;gap:.5rem}
+.json-selector select{padding:.4rem .8rem;border:1px solid var(--border);border-radius:6px;font-size:.85rem}
+.container{max-width:1000px;margin:0 auto;padding:1.5rem}
+.dpp-meta{background:var(--card);border-radius:12px;padding:1.25rem 1.5rem;border:1px solid var(--border);margin-bottom:1.5rem}
+.meta-row{font-size:.85rem;color:var(--muted);padding:.15rem 0}
+.meta-row strong{color:var(--text)}
+.dpp-summary{background:var(--card);border-radius:12px;padding:1.5rem;border:1px solid var(--border);margin-bottom:1.5rem;display:flex;align-items:center;gap:2rem;flex-wrap:wrap}
+.summary-ring{position:relative;width:120px;height:120px;flex-shrink:0}
+.summary-ring svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:#e2e8f0;stroke-width:10}
+.ring-fill{fill:none;stroke:var(--green);stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset .8s ease}
+.ring-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:700;color:var(--green)}
+.summary-title{font-size:1.1rem;font-weight:700;margin-bottom:.5rem}
+.stat{font-size:.9rem;padding:.1rem 0;display:flex;align-items:center;gap:.4rem}
+.stat-total{margin-top:.5rem;font-size:.85rem;color:var(--muted)}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.dot-v{background:var(--green)}.dot-pa{background:var(--amber)}.dot-pe{background:var(--red)}
+.filter-bar{display:flex;gap:.5rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.filter-btn{padding:.45rem 1rem;border:1px solid var(--border);border-radius:20px;background:var(--card);font-size:.85rem;cursor:pointer}
+.filter-btn:hover{border-color:var(--accent)}
+.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.dpp-section{background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:1rem;overflow:hidden}
+.section-header{padding:1rem 1.25rem;cursor:pointer;display:flex;align-items:center;gap:.75rem;background:#fafbfc;border-bottom:1px solid var(--border)}
+.section-header:hover{background:#f0f4f8}
+.section-icon{font-size:1rem;font-weight:700;color:var(--accent)}
+.section-header h2{font-size:1.05rem;flex:1}
+.section-counts{display:flex;gap:.35rem}
+.cnt{width:24px;height:24px;border-radius:50%;font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;color:#fff}
+.cnt-v{background:var(--green)}.cnt-pa{background:var(--amber)}.cnt-pe{background:var(--red)}
+.chevron{font-size:.9rem;color:var(--muted)}
+.section-body{padding:.5rem 1.25rem 1rem}
+.section-body.collapsed{display:none}
+.attribute{padding:1rem 0;border-bottom:1px solid #f0f0f0}
+.attribute:last-child{border-bottom:none}
+.attr-header{display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem;flex-wrap:wrap}
+.attr-header h3{font-size:.95rem;font-weight:600}
+.status-badge{font-size:.75rem;padding:.2rem .6rem;border-radius:12px;font-weight:600}
+.st-verified{background:#c6f6d5;color:#22543d}
+.st-partial{background:#fefcbf;color:#744210}
+.st-pending{background:#fed7d7;color:#742a2a}
+.st-assumed{background:#e2e8f0;color:#4a5568}
+.attr-body{padding-left:.5rem}
+.attr-data{font-size:.88rem;color:var(--text);margin-bottom:.5rem}
+.field-name{color:var(--muted);font-size:.82rem}
+.no-data{color:var(--gray);font-style:italic}
+.attr-note{font-size:.8rem;color:var(--muted);font-style:italic;margin-bottom:.5rem}
+.legal-pill{display:inline-block;font-size:.72rem;padding:.15rem .6rem;border-radius:10px;margin-bottom:.5rem;font-weight:600}
+.legal-ley{background:#c6f6d5;color:#22543d}
+.legal-proyeccion{background:#fefcbf;color:#744210}
+.legal-pendiente{background:#e9d8fd;color:#44337a}
+.source-doc{display:flex;align-items:flex-start;gap:.5rem;background:#f7fafc;border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;margin-bottom:.5rem}
+.doc-icon{font-size:1rem;font-weight:700;color:var(--accent)}
+.doc-info{display:flex;flex-direction:column;font-size:.8rem}
+.doc-info strong{font-size:.85rem;color:var(--text)}
+.doc-type{color:var(--accent)}.doc-gen,.doc-deadline{color:var(--muted)}
+.trackline-badge{display:flex;align-items:flex-start;gap:.5rem;border-radius:8px;padding:.6rem .8rem;font-size:.8rem}
+.trackline-badge.verified{background:#e9d8fd;border:1px solid #d6bcfa}
+.trackline-badge.pending{background:#f7fafc;border:1px solid var(--border)}
+.tl-icon{font-size:.9rem;font-weight:700;color:var(--purple)}
+.tl-info{display:flex;flex-direction:column}
+.tl-info strong{color:var(--purple);font-size:.85rem}
+.tl-hash{font-family:monospace;font-size:.75rem;color:var(--purple)}
+.tl-pid,.tl-date,.tl-by{color:var(--muted);font-size:.78rem}
+.tl-pending{color:var(--muted);font-style:italic}
+.legend{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:1.25rem 1.5rem;margin-bottom:1.5rem}
+.legend h3{font-size:.95rem;margin-bottom:.75rem}
+.legend-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.5rem}
+.legend-item{display:flex;align-items:center;gap:.5rem;font-size:.82rem}
+.legend-swatch{width:14px;height:14px;border-radius:3px;flex-shrink:0}
+.app-footer{text-align:center;padding:2rem;font-size:.8rem;color:var(--muted)}
+.app-footer a{color:var(--accent)}
+.loading{text-align:center;padding:3rem;color:var(--muted);font-size:1.1rem}
+.error{text-align:center;padding:3rem;color:var(--red)}
+@media(max-width:640px){.app-header h1{font-size:1.3rem}.container{padding:1rem}.dpp-summary{flex-direction:column;align-items:flex-start}}
 </style>
 </head>
 <body>
-
-<div class="header">
-  <a href="edit.html" class="edit-link">Editar</a>
-  <div class="badge">EU Furniture Passport · ESPR 2024/1781</div>
-  <h1>DPP Mueble</h1>
-  <p>Pasaporte Digital de Producto — Sector Mueble</p>
-  <div class="dpp-id" id="dpp-id">cargando...</div>
+<header class="app-header">
+<h1>Pasaporte Digital de Producto - Mueble</h1>
+<p>DPP conforme a ESPR (UE) 2024/1781 - Con trazabilidad blockchain Trackline</p>
+<div class="header-badges">
+<span>ESPR 2024/1781</span><span>REACH - EUDR</span><span>Trackline Evidence</span><span>42 atributos</span>
 </div>
-
+</header>
+<nav class="nav-bar">
+<div class="nav-links"><a href="index.html" class="active">Visor</a><a href="edit.html">Editor</a></div>
+<div class="json-selector">
+<label for="jsonFile">Archivo:</label>
+<select id="jsonFile" onchange="loadSelected()">
+<option value="data/dpp.json">Plantilla vacia</option>
+<option value="data/dpp-hari-example.json">Ejemplo: Silla Hari (Ondarreta)</option>
+</select>
+</div>
+</nav>
+<main class="container">
 <div class="legend">
-  <div class="legend-item"><div class="dot" style="background:var(--confirmed)"></div>Confirmado</div>
-  <div class="legend-item"><div class="dot" style="background:var(--partial)"></div>Parcial</div>
-  <div class="legend-item"><div class="dot" style="background:var(--assumed)"></div>Supuesto</div>
-  <div class="legend-item"><div class="dot" style="background:var(--pending)"></div>Pendiente</div>
+<h3>Leyenda</h3>
+<div class="legend-grid">
+<div class="legend-item"><span class="legend-swatch" style="background:#38a169"></span> Verificado - dato completo y validado</div>
+<div class="legend-item"><span class="legend-swatch" style="background:#d69e2e"></span> Parcial - dato disponible, requiere revision</div>
+<div class="legend-item"><span class="legend-swatch" style="background:#e53e3e"></span> Pendiente - sin dato, accion requerida</div>
+<div class="legend-item"><span class="legend-swatch" style="background:#c6f6d5;border:1px solid #38a169"></span> LEY - legislacion en vigor</div>
+<div class="legend-item"><span class="legend-swatch" style="background:#fefcbf;border:1px solid #d69e2e"></span> PROYECCION - regulacion proyectada</div>
+<div class="legend-item"><span class="legend-swatch" style="background:#e9d8fd;border:1px solid #d6bcfa"></span> PENDIENTE AD - pendiente acto delegado</div>
+<div class="legend-item"><span class="legend-swatch" style="background:#6b46c1"></span> Trackline - evidencia blockchain registrada</div>
+<div class="legend-item"><span class="legend-swatch" style="background:#e2e8f0"></span> Documento fuente - que se necesita y quien lo genera</div>
 </div>
-
-<div class="summary">
-  <h3>Estado del pasaporte</h3>
-  <div class="summary-grid">
-    <div class="summary-item c"><div class="num" id="count-confirmed">-</div><div class="lbl">Confirmados</div></div>
-    <div class="summary-item p"><div class="num" id="count-partial">-</div><div class="lbl">Parciales</div></div>
-    <div class="summary-item a"><div class="num" id="count-assumed">-</div><div class="lbl">Supuestos</div></div>
-    <div class="summary-item pe"><div class="num" id="count-pending">-</div><div class="lbl">Pendientes</div></div>
-  </div>
 </div>
-
-<div id="app"></div>
-
-<div class="footer">
-  <strong>Version <span id="footer-version">-</span> · Prototipo piloto</strong><br>
-  Generado: <span id="footer-date">-</span><br>
-  Basado en ESPR (UE) 2024/1781 · Working Plan 2025-2030<br>
-  42 atributos · 10 categorias · Sector Mueble
-</div>
-
+<div id="dpp-root"></div>
+</main>
+<footer class="app-footer">
+DPP Mueble v0.2 - <a href="https://github.com/edupeter/dpp-furniture-passport" target="_blank">GitHub</a>
+- Evidencia: <a href="https://trackline.codecontract.com" target="_blank">Trackline by Code Contract S.L.</a>
+- Regulacion ESPR (UE) 2024/1781
+</footer>
 <script src="js/app.js"></script>
+<script>
+function loadSelected(){var s=document.getElementById('jsonFile');DPP.init(s.value,'dpp-root');}
+DPP.init('data/dpp.json','dpp-root');
+</script>
 </body>
 </html>

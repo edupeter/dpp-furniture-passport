@@ -1,366 +1,85 @@
 {
   "_meta": {
-    "schema": "FurniturePassDataModel v0.1 (ESPR-Ready)",
+    "schema": "FurniturePassDataModel v0.2 (ESPR-Ready + Trackline)",
     "basedOn": "ESPR (UE) 2024/1781 + Working Plan 2025-2030",
-    "regulation": "ESPR 2024/1781 · REACH · EUDR 2023/1115 · CS3D 2024/1760",
+    "regulation": "ESPR 2024/1781 REACH EUDR 2023/1115 CS3D 2024/1760",
     "generatedDate": "2026-04-13",
-    "version": "0.1-piloto",
-    "dppStatus": {
-      "value": "draft",
-      "_status": "assumed",
-      "_note": "Estado del pasaporte: draft | active | inactive | expired. Pendiente de acto delegado mueble (~2028)."
-    },
-    "dppGranularity": {
-      "value": "model",
-      "_status": "assumed",
-      "_note": "Granularidad del DPP: model | batch | item. Por defecto 'model' para muebles."
-    },
-    "notes": "Plantilla piloto DPP para el sector mueble. 42 atributos en 10 categorías. Campos con _status: confirmed = verificado; partial = dato incompleto; assumed = estimado/pendiente; pending = sin dato."
+    "version": "0.2-piloto",
+    "evidenceProvider": "Trackline by Code Contract S.L.",
+    "dppStatus": { "value": "draft", "_status": "assumed", "_note": "Estado del pasaporte: draft | active | inactive | expired." },
+    "dppGranularity": { "value": "model", "_status": "assumed", "_note": "Granularidad del DPP: model | batch | item." },
+    "notes": "Plantilla DPP mueble. 42 atributos, 10 categorias."
   },
-
   "productIdentification": {
-    "_icon": "📋",
-    "_title": "Identificación del producto",
-
-    "productName": {
-      "value": null,
-      "_status": "pending",
-      "_note": "Nombre comercial del producto."
-    },
-    "manufacturer": {
-      "value": null,
-      "address": null,
-      "country": null,
-      "_status": "pending",
-      "_note": "Razón social, dirección completa y país de fabricación."
-    },
-    "productCodeGTIN": {
-      "value": null,
-      "_status": "pending",
-      "_note": "Código de barras EAN-13 o GTIN-14. Identificador único de producto ESPR Art. 9(3)."
-    },
-    "modelReference": {
-      "value": null,
-      "_status": "pending",
-      "_note": "Referencia interna de catálogo del fabricante."
-    },
-    "productCategory": {
-      "value": null,
-      "cpcCode": null,
-      "_status": "pending",
-      "_note": "Categoría de producto y código UN CPC (ej: 3811 Asientos, 3812 Muebles)."
-    },
-    "dimensions": {
-      "width": null,
-      "depth": null,
-      "height": null,
-      "seatHeight": null,
-      "unit": "cm",
-      "_status": "pending",
-      "_note": "Dimensiones del producto (ancho × fondo × alto). Altura de asiento si aplica."
-    },
-    "productImage": {
-      "url": null,
-      "_status": "pending",
-      "_note": "URL o referencia a fotografía del producto en alta resolución."
-    },
-    "declaredUnit": {
-      "value": null,
-      "_status": "pending",
-      "_note": "Unidad funcional declarada para el ACV (ej: '1 silla durante 15 años de uso')."
-    },
-    "placeOfManufacturing": {
-      "value": null,
-      "_status": "pending",
-      "_note": "Localización de la planta de ensamblaje final (ciudad, región, país)."
-    }
+    "_icon": "ID", "_title": "Identificacion del producto",
+    "productName": { "value": null, "_status": "pending", "_legalBasis": "ESPR Art. 9(1) LEY", "_sourceDocument": { "name": "Ficha tecnica de producto", "type": "Ficha tecnica", "generatedBy": "Ingenieria / Producto", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Nombre comercial oficial del catalogo." },
+    "manufacturer": { "value": null, "address": null, "country": null, "_status": "pending", "_legalBasis": "ESPR Art. 9(1) LEY", "_sourceDocument": { "name": "Escritura de constitucion", "type": "Documento legal", "generatedBy": "Legal", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Razon social completa + direccion." },
+    "countryOfManufacturing": { "value": null, "_status": "pending", "_legalBasis": "ESPR Art. 9(1) LEY", "_sourceDocument": { "name": "Ficha tecnica", "type": "Ficha tecnica", "generatedBy": "Ingenieria", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Pais de ensamblaje final." },
+    "productCodeGTIN": { "value": null, "_status": "pending", "_legalBasis": "ESPR Art. 9(3) LEY", "_sourceDocument": { "name": "Registro GS1", "type": "Codigo de barras", "generatedBy": "Logistica", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "EAN-13 o GTIN-14." },
+    "modelReference": { "value": null, "_status": "pending", "_legalBasis": "ESPR Art. 9(1) LEY", "_sourceDocument": { "name": "Catalogo / ERP interno", "type": "Catalogo", "generatedBy": "Comercial", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Codigo interno del fabricante." },
+    "productCategory": { "value": null, "cpcCode": null, "_status": "pending", "_legalBasis": "ESPR Art. 9(1) LEY", "_sourceDocument": { "name": "Ficha tecnica", "type": "Ficha tecnica", "generatedBy": "Ingenieria", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "CPC 3811 (asientos) o 3812 (muebles)." },
+    "dimensions": { "width": null, "depth": null, "height": null, "seatHeight": null, "unit": "cm", "_status": "pending", "_legalBasis": "ESPR Art. 9(1) LEY", "_sourceDocument": { "name": "Ficha tecnica / Plano CAD", "type": "Ficha tecnica", "generatedBy": "Ingenieria", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Ancho x fondo x alto (cm)." },
+    "productImage": { "url": null, "_status": "pending", "_legalBasis": "ESPR Art. 9(1) LEY", "_sourceDocument": { "name": "Fotografia profesional / Render 3D", "type": "Archivo multimedia", "generatedBy": "Marketing", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Alta resolucion, fondo neutro recomendado." },
+    "declaredUnit": { "value": null, "_status": "pending", "_legalBasis": "ISO 14040; c-PCR-021 LEY", "_sourceDocument": { "name": "Informe ACV (EPD)", "type": "Informe ACV / EPD", "generatedBy": "Consultor ACV", "deadline": "Previo a EPD" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Ej: 1 silla durante 15 anos de uso." }
   },
-
   "materialComposition": {
-    "_icon": "🪵",
-    "_title": "Materiales y lista de componentes (BOM)",
-
-    "billOfMaterials": [
-      {
-        "materialName": null,
-        "weight": null,
-        "unit": "kg",
-        "percentage": null,
-        "recycledContent": null,
-        "supplier": null,
-        "_status": "pending",
-        "_note": "Componente principal. Indicar peso, %, contenido reciclado y proveedor."
-      }
-    ],
-    "totalProductWeight": {
-      "value": null,
-      "unit": "kg",
-      "_status": "pending",
-      "_note": "Peso neto del producto terminado sin embalaje."
-    },
-    "recycledContentOverall": {
-      "value": null,
-      "unit": "%",
-      "_status": "pending",
-      "_note": "Porcentaje global de contenido reciclado (pre + post consumo). ESPR Art. 7(2)(b)."
-    },
-    "woodOrigin": {
-      "species": null,
-      "country": null,
-      "certification": null,
-      "licenseNumber": null,
-      "_status": "pending",
-      "_note": "Especie de madera, país de tala, certificación FSC/PEFC con nº de licencia. EUDR Art. 4."
-    },
-    "hazardousSubstancesSVHC": {
-      "containsSVHC": null,
-      "substances": [],
-      "_status": "pending",
-      "_note": "Declaración de SVHC según lista candidata ECHA (>0,1% w/w). REACH Art. 33; ESPR Art. 7(5)."
-    }
+    "_icon": "MAT", "_title": "Materiales y BOM",
+    "billOfMaterials": { "value": null, "_status": "pending", "_legalBasis": "ESPR Art. 9(1); Anexo III LEY", "_sourceDocument": { "name": "BOM del ERP / Ficha tecnica", "type": "Ficha tecnica", "generatedBy": "Ingenieria / Produccion", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Material, peso (kg), porcentaje por componente." },
+    "totalProductWeight": { "value": null, "unit": "kg", "_status": "pending", "_legalBasis": "ESPR Anexo III LEY", "_sourceDocument": { "name": "Ficha tecnica", "type": "Ficha tecnica", "generatedBy": "Ingenieria", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Peso neto sin embalaje." },
+    "recycledContent": { "value": null, "unit": "%", "_status": "pending", "_legalBasis": "ESPR Art. 7(2)(b) LEY", "_sourceDocument": { "name": "Declaracion proveedor de material", "type": "Declaracion proveedor", "generatedBy": "Proveedor (solicitar)", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Pre/post consumo por material." },
+    "woodOrigin": { "species": null, "country": null, "certification": null, "licenseNumber": null, "_status": "pending", "_legalBasis": "EUDR (UE) 2023/1115 Art. 4 LEY", "_sourceDocument": { "name": "Certificado Cadena de Custodia FSC/PEFC", "type": "Certificado FSC/PEFC", "generatedBy": "Organismo certificador", "deadline": "30/06/2026" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "N licencia, especie, pais de tala." },
+    "hazardousSubstancesSVHC": { "containsSVHC": null, "substances": [], "_status": "pending", "_legalBasis": "REACH Art. 33; ESPR Art. 7(5) LEY", "_sourceDocument": { "name": "Declaracion SVHC proveedor + analisis laboratorio", "type": "Declaracion proveedor", "generatedBy": "Proveedor + Lab. acreditado", "deadline": "Ya en vigor" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Listado SVHC >0,1% segun lista candidata ECHA." }
   },
-
   "chemicalSafety": {
-    "_icon": "⚗️",
-    "_title": "Seguridad química",
-
-    "formaldehydeEmission": {
-      "value": null,
-      "unit": "mg/m³",
-      "testMethod": "EN 717-1",
-      "limit": "0,062 mg/m³ (desde 6/08/2026)",
-      "_status": "pending",
-      "_note": "Concentración medida en cámara según EN 717-1. Límite REACH entrada 77: 0,062 mg/m³."
-    },
-    "diisocyanates": {
-      "present": null,
-      "concentration": null,
-      "trainingCompliance": null,
-      "_status": "pending",
-      "_note": "MDI/TDI en espumas PU. Formación obligatoria operarios desde 24/08/2023. REACH entrada 74."
-    },
-    "vocEmissions": {
-      "value": null,
-      "unit": "μg/m³",
-      "testMethod": "ISO 16000 / EN 16516",
-      "_status": "pending",
-      "_note": "Emisiones de COV medidas en cámara de ensayo. Dir. 2004/42/CE para pinturas."
-    },
-    "scipNotification": {
-      "notified": null,
-      "scipNumber": null,
-      "_status": "pending",
-      "_note": "Nº de notificación SCIP (ECHA) si contiene SVHC >0,1%. Obligatorio desde enero 2021."
-    },
-    "reachCompliance": {
-      "compliant": null,
-      "declarationDate": null,
-      "_status": "pending",
-      "_note": "Declaración formal de conformidad REACH con fecha de última actualización lista SVHC."
-    },
-    "safetyDataSheets": {
-      "available": null,
-      "chemicals": [],
-      "_status": "pending",
-      "_note": "FDS disponibles para adhesivos, barnices, espumas PU y aleaciones. REACH Art. 31."
-    }
+    "_icon": "CHEM", "_title": "Seguridad quimica",
+    "formaldehydeEmission": { "value": null, "unit": "mg/m3", "testMethod": "EN 717-1", "limit": "0,062 mg/m3 (desde 6/08/2026)", "_status": "pending", "_legalBasis": "REACH Anexo XVII entrada 77 LEY", "_sourceDocument": { "name": "Informe ensayo EN 717-1 (camara)", "type": "Informe ensayo quimico", "generatedBy": "Laboratorio acreditado ENAC", "deadline": "6/08/2026" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Limite: 0,062 mg/m3. URGENTE." },
+    "diisocyanates": { "present": null, "concentration": null, "trainingCompliance": null, "_status": "pending", "_legalBasis": "REACH Anexo XVII entrada 74 LEY", "_sourceDocument": { "name": "FDS espuma PU + Certificado formacion operarios", "type": "FDS + Certificado", "generatedBy": "Proveedor PU + Empresa (RRHH)", "deadline": "Ya en vigor" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Si usa espuma PU. Formacion obligatoria desde 24/08/2023." },
+    "vocEmissions": { "value": null, "unit": "ug/m3", "testMethod": "ISO 16000 / EN 16516", "_status": "pending", "_legalBasis": "ESPR Anexo I; Dir. 2004/42/CE PROYECCION", "_sourceDocument": { "name": "Informe ensayo ISO 16000 / EN 16516", "type": "Informe ensayo quimico", "generatedBy": "Laboratorio acreditado ENAC", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Ensayo en camara de barnices/pinturas." },
+    "scipNotification": { "notified": null, "scipNumber": null, "_status": "pending", "_legalBasis": "Dir. Marco Residuos Art. 9(1)(i) LEY", "_sourceDocument": { "name": "Confirmacion notificacion portal SCIP", "type": "Notificacion SCIP", "generatedBy": "La empresa (portal ECHA)", "deadline": "Ya en vigor" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Obligatorio si SVHC >0,1%. Portal ECHA gratuito." },
+    "reachCompliance": { "compliant": null, "declarationDate": null, "_status": "pending", "_legalBasis": "REACH (CE) 1907/2006 LEY", "_sourceDocument": { "name": "Declaracion conformidad REACH firmada", "type": "Declaracion conformidad", "generatedBy": "Calidad / Legal", "deadline": "Ya en vigor" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Actualizar con cada revision lista SVHC." },
+    "safetyDataSheets": { "available": null, "chemicals": [], "_status": "pending", "_legalBasis": "REACH Art. 31; CLP 1272/2008 LEY", "_sourceDocument": { "name": "FDS de cada proveedor quimico", "type": "FDS", "generatedBy": "Proveedores de quimicos", "deadline": "Ya en vigor" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "FDS de colas, barnices, espumas, aleaciones." }
   },
-
   "carbonFootprint": {
-    "_icon": "🌍",
-    "_title": "Huella de carbono y energía",
-
-    "gwpTotal": {
-      "value": null,
-      "unit": "kg CO₂ eq",
-      "scope": "cradle to grave",
-      "dataQuality": null,
-      "_status": "pending",
-      "_note": "GWP total por unidad funcional. Indicar si los datos upstream son primarios o secundarios (Ecoinvent)."
-    },
-    "gwpByPhase": {
-      "upstream": { "value": null, "unit": "kg CO₂ eq", "dataType": null },
-      "core": { "value": null, "unit": "kg CO₂ eq", "dataType": null },
-      "downstream": { "value": null, "unit": "kg CO₂ eq", "dataType": null },
-      "_status": "pending",
-      "_note": "Desglose por fase del ciclo de vida. Indicar 'primario' o 'secundario' en dataType."
-    },
-    "primaryEnergyRenewable": {
-      "value": null,
-      "unit": "MJ",
-      "_status": "pending",
-      "_note": "Energía primaria renovable total (como energía + como materia prima)."
-    },
-    "primaryEnergyNonRenewable": {
-      "value": null,
-      "unit": "MJ",
-      "_status": "pending",
-      "_note": "Energía primaria no renovable total (como energía + como materia prima)."
-    }
+    "_icon": "CO2", "_title": "Huella de carbono y energia",
+    "gwpTotal": { "value": null, "unit": "kg CO2 eq", "scope": "cradle to grave", "_status": "pending", "_legalBasis": "ESPR Art. 7(2)(a); ISO 14067 PROYECCION", "_sourceDocument": { "name": "EPD verificada (Informe ACV)", "type": "Informe ACV / EPD", "generatedBy": "Consultor ACV + Verificador ENAC", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "DPP exigira datos primarios de proveedores." },
+    "gwpByPhase": { "upstream": null, "core": null, "downstream": null, "unit": "kg CO2 eq", "_status": "pending", "_legalBasis": "ESPR Anexo I; EN 15804 PROYECCION", "_sourceDocument": { "name": "Informe ACV (tablas de impacto por fase)", "type": "Informe ACV / EPD", "generatedBy": "Consultor ACV", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Indicar si upstream es primario o secundario." },
+    "primaryEnergyRenewable": { "value": null, "unit": "MJ", "_status": "pending", "_legalBasis": "ESPR Anexo I; ISO 14044 PROYECCION", "_sourceDocument": { "name": "Informe ACV + Facturas energeticas fabrica", "type": "Informe ACV / EPD", "generatedBy": "Consultor ACV + Operaciones", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Factura electrica = dato primario de fabrica." },
+    "primaryEnergyNonRenewable": { "value": null, "unit": "MJ", "_status": "pending", "_legalBasis": "ESPR Anexo I; ISO 14044 PROYECCION", "_sourceDocument": { "name": "Informe ACV + Facturas energeticas fabrica", "type": "Informe ACV / EPD", "generatedBy": "Consultor ACV + Operaciones", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Gas, gasoil de la planta." }
   },
-
   "durability": {
-    "_icon": "🔨",
-    "_title": "Durabilidad",
-
-    "expectedLifetime": {
-      "value": null,
-      "unit": "years",
-      "_status": "pending",
-      "_note": "Vida útil estimada en años, basada en ensayos y/o experiencia de mercado."
-    },
-    "testStandard": {
-      "value": null,
-      "category": null,
-      "_status": "pending",
-      "_note": "Norma de ensayo (ej: EN 16139:2013) y categoría (L1 doméstico / L2 severo). Referencia al informe."
-    },
-    "commercialWarranty": {
-      "value": null,
-      "unit": "years",
-      "conditions": null,
-      "_status": "pending",
-      "_note": "Duración de la garantía comercial y condiciones principales."
-    }
+    "_icon": "DUR", "_title": "Durabilidad",
+    "expectedLifetime": { "value": null, "unit": "years", "_status": "pending", "_legalBasis": "ESPR Art. 7(2)(c) PENDIENTE AD", "_sourceDocument": { "name": "Informe ensayo durabilidad", "type": "Informe de ensayo", "generatedBy": "Laboratorio acreditado", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Anos basada en ensayos + experiencia de mercado." },
+    "testStandard": { "value": null, "category": null, "_status": "pending", "_legalBasis": "ESPR Anexo I PENDIENTE AD", "_sourceDocument": { "name": "Informe ensayo mecanico (EN 16139 / EN 527)", "type": "Informe de ensayo", "generatedBy": "Laboratorio acreditado ENAC", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Num informe + categoria L1/L2." },
+    "commercialWarranty": { "value": null, "unit": "years", "conditions": null, "_status": "pending", "_legalBasis": "ESPR Art. 7(2)(c) PENDIENTE AD", "_sourceDocument": { "name": "Documento de garantia del fabricante", "type": "Documento comercial", "generatedBy": "Comercial / Legal", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Anos de garantia + condiciones." }
   },
-
   "repairability": {
-    "_icon": "🔧",
-    "_title": "Reparabilidad",
-
-    "repairabilityIndex": {
-      "value": null,
-      "methodology": null,
-      "_status": "pending",
-      "_note": "Puntuación según metodología del acto delegado. Evaluar: acceso, herramientas, coste relativo."
-    },
-    "sparePartsAvailability": {
-      "available": null,
-      "parts": [],
-      "yearsPostSale": null,
-      "_status": "pending",
-      "_note": "Lista de piezas, precio orientativo, plazo de disponibilidad (mín. 7-10 años recomendado)."
-    },
-    "repairInstructions": {
-      "url": null,
-      "_status": "pending",
-      "_note": "Manual de reparación accesible digitalmente (PDF o enlace). Procedimientos paso a paso."
-    }
+    "_icon": "REP", "_title": "Reparabilidad",
+    "repairabilityIndex": { "value": null, "methodology": null, "_status": "pending", "_legalBasis": "ESPR Art. 7(2)(c); Anexo I PENDIENTE AD", "_sourceDocument": { "name": "Evaluacion interna de reparabilidad", "type": "Guia tecnica", "generatedBy": "Ingenieria / Calidad", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Metodologia pendiente del acto delegado." },
+    "sparePartsAvailability": { "available": null, "parts": [], "yearsPostSale": null, "_status": "pending", "_legalBasis": "ESPR Art. 7(2)(c) PENDIENTE AD", "_sourceDocument": { "name": "Catalogo piezas recambio + precios", "type": "Catalogo", "generatedBy": "Comercial / Posventa", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Lista, precio, disponibilidad min. 7-10 anos." },
+    "repairInstructions": { "url": null, "_status": "pending", "_legalBasis": "ESPR Art. 7(2)(c) PENDIENTE AD", "_sourceDocument": { "name": "Manual de reparacion (PDF / web)", "type": "Guia tecnica", "generatedBy": "Ingenieria / Posventa", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Accesible digitalmente via URL en el DPP." }
   },
-
   "circularityAndDisassembly": {
-    "_icon": "♻️",
-    "_title": "Desmontaje y circularidad",
-
-    "disassemblyInstructions": {
-      "url": null,
-      "tools": null,
-      "estimatedTime": null,
-      "_status": "pending",
-      "_note": "Guía de desensamblaje con herramientas, tiempos y secuencia para recicladores."
-    },
-    "recyclabilityRate": {
-      "value": null,
-      "unit": "%",
-      "methodology": null,
-      "_status": "pending",
-      "_note": "Porcentaje en peso técnicamente reciclable. ISO 14021 o metodología acto delegado."
-    },
-    "endOfLifeScenario": {
-      "description": null,
-      "recyclingRate": null,
-      "landfillRate": null,
-      "incinerationRate": null,
-      "_status": "pending",
-      "_note": "Escenario de fin de vida modelado con tasas de reciclaje/vertedero/incineración."
-    }
+    "_icon": "CIRC", "_title": "Desmontaje y circularidad",
+    "disassemblyInstructions": { "url": null, "tools": null, "estimatedTime": null, "_status": "pending", "_legalBasis": "ESPR Art. 7(2)(d); Anexo I PENDIENTE AD", "_sourceDocument": { "name": "Guia de desensamblaje", "type": "Guia tecnica", "generatedBy": "Ingenieria", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Herramientas, tiempos, secuencia. Para recicladores." },
+    "recyclabilityRate": { "value": null, "unit": "%", "methodology": null, "_status": "pending", "_legalBasis": "ESPR Anexo I PENDIENTE AD", "_sourceDocument": { "name": "Analisis reciclabilidad (ISO 14021)", "type": "Informe ACV / EPD", "generatedBy": "Consultor ACV / Ingenieria", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "% en peso tecnicamente reciclable." },
+    "endOfLifeScenario": { "description": null, "recyclingRate": null, "landfillRate": null, "incinerationRate": null, "_status": "pending", "_legalBasis": "ESPR Anexo I; ISO 14044 PROYECCION", "_sourceDocument": { "name": "Informe ACV (modulo C+D)", "type": "Informe ACV / EPD", "generatedBy": "Consultor ACV", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Escenario modelado con tasas reciclaje/vertedero/incineracion." }
   },
-
   "packaging": {
-    "_icon": "📦",
-    "_title": "Embalaje",
-
-    "packagingMaterials": [
-      {
-        "materialName": null,
-        "weight": null,
-        "unit": "kg",
-        "percentage": null,
-        "recycledContent": null,
-        "_status": "pending"
-      }
-    ],
-    "packagingRecycledContent": {
-      "value": null,
-      "unit": "%",
-      "_status": "pending",
-      "_note": "Porcentaje global de contenido reciclado en el embalaje."
-    }
+    "_icon": "PKG", "_title": "Embalaje",
+    "packagingMaterials": { "value": null, "_status": "pending", "_legalBasis": "ESPR Anexo I; Dir. 94/62/CE LEY", "_sourceDocument": { "name": "Ficha tecnica de embalaje / BOM", "type": "Ficha tecnica", "generatedBy": "Logistica / Ingenieria", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Materiales, pesos (kg), tipos de plastico." },
+    "packagingRecycledContent": { "value": null, "unit": "%", "_status": "pending", "_legalBasis": "ESPR Anexo I; Reg. (UE) 2025/40 LEY", "_sourceDocument": { "name": "Declaracion proveedor embalaje", "type": "Declaracion proveedor", "generatedBy": "Proveedor de embalaje", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Contenido reciclado por material de embalaje." }
   },
-
   "supplyChain": {
-    "_icon": "🔗",
-    "_title": "Cadena de suministro",
-
-    "rawMaterialOrigins": [
-      {
-        "material": null,
-        "country": null,
-        "supplier": null,
-        "_status": "pending"
-      }
-    ],
-    "woodTraceability": {
-      "eudrCompliant": null,
-      "geoLocation": null,
-      "species": null,
-      "harvestDate": null,
-      "dueDiligenceStatement": null,
-      "_status": "pending",
-      "_note": "Trazabilidad EUDR: geolocalización parcela, especie, fecha tala, declaración diligencia debida."
-    },
-    "supplyChainDueDiligence": {
-      "cs3dCompliant": null,
-      "reportUrl": null,
-      "tier1Suppliers": null,
-      "_status": "pending",
-      "_note": "Declaración de diligencia debida conforme CS3D para proveedores Tier 1 y críticos."
-    }
+    "_icon": "SCM", "_title": "Cadena de suministro",
+    "rawMaterialOrigins": { "value": null, "_status": "pending", "_legalBasis": "ESPR Art. 9(1); CS3D PROYECCION", "_sourceDocument": { "name": "Declaracion origen por proveedor", "type": "Declaracion proveedor", "generatedBy": "Proveedores Tier 1", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Pais especifico por material principal." },
+    "woodTraceability": { "eudrCompliant": null, "geoLocation": null, "species": null, "harvestDate": null, "_status": "pending", "_legalBasis": "EUDR (UE) 2023/1115 Art. 4-9 LEY", "_sourceDocument": { "name": "Declaracion diligencia debida EUDR", "type": "Declaracion diligencia debida", "generatedBy": "Empresa + Proveedor madera", "deadline": "30/06/2026" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Geolocalizacion parcela, especie, fecha tala." },
+    "supplyChainDueDiligence": { "cs3dCompliant": null, "reportUrl": null, "_status": "pending", "_legalBasis": "CS3D (UE) 2024/1760 LEY", "_sourceDocument": { "name": "Informe CS3D diligencia debida", "type": "Declaracion diligencia debida", "generatedBy": "Empresa (apoyo legal)", "deadline": "Escalonado 2027-2029" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Grandes 2027, PYME 2029." }
   },
-
   "complianceAndDigital": {
-    "_icon": "✅",
-    "_title": "Conformidad y soporte digital",
-
-    "epdLink": {
-      "registrationNumber": null,
-      "programOperator": null,
-      "url": null,
-      "validUntil": null,
-      "_status": "pending",
-      "_note": "URL permanente a la EPD verificada en el programa operador."
-    },
-    "certifications": [
-      {
-        "name": null,
-        "number": null,
-        "validUntil": null,
-        "_status": "pending"
-      }
-    ],
-    "verificationBody": {
-      "name": null,
-      "accreditationNumber": null,
-      "accreditedBy": null,
-      "_status": "pending",
-      "_note": "Organismo verificador, nº acreditación y entidad acreditadora."
-    },
-    "dppIdentifier": {
-      "uniqueId": null,
-      "dataCarrier": null,
-      "accessUrl": null,
-      "_status": "pending",
-      "_note": "Identificador único + portador de datos (QR/RFID/NFC). ESPR Art. 9-11."
-    }
+    "_icon": "OK", "_title": "Conformidad y soporte digital",
+    "epdLink": { "registrationNumber": null, "programOperator": null, "url": null, "validUntil": null, "_status": "pending", "_legalBasis": "ISO 14025; ESPR Art. 9(1) LEY", "_sourceDocument": { "name": "EPD publicada en programa operador", "type": "Informe ACV / EPD", "generatedBy": "Programa operador", "deadline": "Acto delegado ~2028" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "URL permanente en environdec.com o similar." },
+    "certifications": { "value": null, "_status": "pending", "_legalBasis": "ESPR Art. 9(1) LEY", "_sourceDocument": { "name": "Certificados originales (ISO, OEKO-TEX, Ecolabel...)", "type": "Certificado", "generatedBy": "Organismos certificadores", "deadline": "Segun cada certificado" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Num certificado + fecha vigencia." },
+    "verificationBody": { "name": null, "accreditationNumber": null, "accreditedBy": null, "_status": "pending", "_legalBasis": "ISO 14025; ESPR Art. 9 LEY", "_sourceDocument": { "name": "Certificado verificacion EPD", "type": "Certificado", "generatedBy": "Verificador acreditado ENAC", "deadline": "Al obtener EPD" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "Nombre, num acreditacion, alcance." },
+    "dppIdentifier": { "uniqueId": null, "dataCarrier": null, "accessUrl": null, "_status": "pending", "_legalBasis": "ESPR Art. 9-12 LEY", "_sourceDocument": { "name": "Sistema DPP + Registro Comision", "type": "Registro DPP", "generatedBy": "Proveedor tecnologico DPP", "deadline": "Registro: 19/07/2026" }, "_evidence": { "tracklineProcessId": null, "blockchainTxHash": null, "registeredDate": null, "registeredBy": null }, "_note": "QR / RFID / NFC. Identificador unico ESPR Art. 9-11." }
   }
 }

@@ -1,571 +1,455 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DPP Editor — Mueble</title>
-<style>
-  :root {
-    --confirmed: #2e7d4f; --partial: #f59e0b; --assumed: #3b82f6;
-    --pending: #9ca3af;
-    --bg: #f8fafc; --card: #fff; --border: #e2e8f0;
-    --text: #1e293b; --muted: #64748b;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DPP Mueble — Editor</title>
+  <style>
+    :root {
+      --bg: #f5f7fa; --card: #ffffff; --border: #e2e8f0;
+      --text: #1a202c; --muted: #718096; --accent: #2b6cb0;
+      --green: #38a169; --amber: #d69e2e; --red: #e53e3e;
+      --purple: #6b46c1;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
 
-  header {
-    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
-    color: #fff; padding: 1.2rem 2rem; display: flex; align-items: center; gap: 1rem;
-    position: sticky; top: 0; z-index: 100;
-  }
-  header h1 { font-size: 1.3rem; font-weight: 600; }
-  header .subtitle { font-size: .85rem; opacity: .7; }
+    .app-header {
+      background: linear-gradient(135deg, #44337a 0%, #6b46c1 100%);
+      color: white; padding: 2rem; text-align: center;
+    }
+    .app-header h1 { font-size: 1.6rem; margin-bottom: .25rem; }
+    .app-header p { opacity: .85; font-size: .9rem; }
 
-  .toolbar {
-    background: #fff; border-bottom: 1px solid var(--border);
-    padding: .8rem 2rem; display: flex; align-items: center; gap: 1rem;
-    position: sticky; top: 52px; z-index: 99; flex-wrap: wrap;
-  }
-  .toolbar .status-msg { margin-left: auto; font-size: .85rem; }
-  .toolbar .status-msg.ok { color: var(--confirmed); }
-  .toolbar .status-msg.err { color: #dc2626; }
-  .toolbar .status-msg.busy { color: var(--partial); }
+    .nav-bar {
+      background: var(--card); border-bottom: 1px solid var(--border); padding: .75rem 2rem;
+      display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap;
+    }
+    .nav-links { display: flex; gap: .5rem; }
+    .nav-links a {
+      text-decoration: none; color: var(--accent); font-weight: 600; font-size: .9rem;
+      padding: .4rem .8rem; border-radius: 6px;
+    }
+    .nav-links a:hover { background: #ebf4ff; }
+    .nav-links a.active { background: var(--purple); color: white; }
 
-  .btn {
-    padding: .5rem 1.2rem; border: none; border-radius: 6px;
-    font-size: .85rem; font-weight: 600; cursor: pointer; transition: .15s;
-  }
-  .btn-primary { background: var(--confirmed); color: #fff; }
-  .btn-primary:hover { background: #256b40; }
-  .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; }
-  .btn-secondary { background: #e2e8f0; color: var(--text); }
-  .btn-secondary:hover { background: #cbd5e1; }
+    .toolbar {
+      background: var(--card); border-bottom: 1px solid var(--border);
+      padding: .75rem 2rem; display: flex; gap: .75rem; flex-wrap: wrap; align-items: center;
+    }
+    .toolbar button {
+      padding: .5rem 1rem; border-radius: 8px; border: 1px solid var(--border);
+      font-size: .85rem; font-weight: 600; cursor: pointer; transition: all .2s;
+    }
+    .btn-primary { background: var(--accent); color: white; border-color: var(--accent); }
+    .btn-primary:hover { background: #2c5282; }
+    .btn-green { background: var(--green); color: white; border-color: var(--green); }
+    .btn-green:hover { background: #2f855a; }
+    .btn-purple { background: var(--purple); color: white; border-color: var(--purple); }
+    .btn-purple:hover { background: #553c9a; }
+    .btn-outline { background: var(--card); }
+    .btn-outline:hover { background: #f7fafc; }
+    .toolbar .spacer { flex: 1; }
+    .toolbar .status-msg { font-size: .82rem; color: var(--muted); }
 
-  .container { max-width: 960px; margin: 0 auto; padding: 1.5rem; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 1.5rem; }
 
-  .section {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 10px; margin-bottom: 1.2rem; overflow: hidden;
-  }
-  .section-header {
-    padding: .8rem 1.2rem; background: #f1f5f9;
-    font-weight: 700; font-size: 1rem; cursor: pointer;
-    display: flex; align-items: center; gap: .5rem;
-    user-select: none; border-bottom: 1px solid var(--border);
-  }
-  .section-header .arrow { transition: .2s; display: inline-block; }
-  .section-header.collapsed .arrow { transform: rotate(-90deg); }
-  .section-body { padding: 1rem 1.2rem; }
-  .section-body.hidden { display: none; }
+    .edit-section {
+      background: var(--card); border-radius: 12px; border: 1px solid var(--border);
+      margin-bottom: 1rem; overflow: hidden;
+    }
+    .edit-section-header {
+      padding: 1rem 1.25rem; cursor: pointer; display: flex; align-items: center; gap: .75rem;
+      background: #fafbfc; border-bottom: 1px solid var(--border);
+    }
+    .edit-section-header:hover { background: #f0f4f8; }
+    .edit-section-header h2 { font-size: 1rem; flex: 1; }
+    .edit-section-body { padding: 1rem 1.25rem; }
+    .edit-section-body.collapsed { display: none; }
 
-  .field-row {
-    display: grid; grid-template-columns: 200px 1fr 130px;
-    gap: .6rem; align-items: start; padding: .5rem 0;
-    border-bottom: 1px solid #f1f5f9;
-  }
-  .field-row:last-child { border-bottom: none; }
-  .field-label {
-    font-size: .82rem; font-weight: 600; color: var(--muted);
-    padding-top: .35rem; word-break: break-word;
-  }
-  .field-input { width: 100%; }
-  .field-input input, .field-input textarea {
-    width: 100%; padding: .4rem .6rem; border: 1px solid var(--border);
-    border-radius: 5px; font-size: .85rem; font-family: inherit; transition: border-color .15s;
-  }
-  .field-input input:focus, .field-input textarea:focus {
-    outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,.15);
-  }
-  .field-input textarea { resize: vertical; min-height: 2.2rem; }
-  .field-input .note-row { margin-top: .3rem; }
-  .field-input .note-row input { font-size: .78rem; color: var(--muted); border-color: #f1f5f9; }
+    .edit-attr {
+      border: 1px solid var(--border); border-radius: 10px; padding: 1rem;
+      margin-bottom: .75rem; background: #fafbfc;
+    }
+    .edit-attr-title {
+      display: flex; align-items: center; gap: .5rem; margin-bottom: .75rem;
+    }
+    .edit-attr-title h3 { font-size: .9rem; flex: 1; }
 
-  .status-select {
-    padding: .35rem .5rem; border: 1px solid var(--border);
-    border-radius: 5px; font-size: .8rem; font-weight: 600; cursor: pointer; width: 100%;
-  }
-  .status-select.confirmed { background: #dcfce7; color: var(--confirmed); border-color: var(--confirmed); }
-  .status-select.partial   { background: #fef3c7; color: #92400e; border-color: var(--partial); }
-  .status-select.assumed   { background: #dbeafe; color: #1e40af; border-color: var(--assumed); }
-  .status-select.pending   { background: #f1f5f9; color: var(--pending); border-color: var(--pending); }
+    .field-group { margin-bottom: .5rem; }
+    .field-group label {
+      display: block; font-size: .78rem; color: var(--muted); font-weight: 600;
+      margin-bottom: .15rem;
+    }
+    .field-group input, .field-group select, .field-group textarea {
+      width: 100%; padding: .4rem .6rem; border: 1px solid var(--border); border-radius: 6px;
+      font-size: .85rem; font-family: inherit;
+    }
+    .field-group textarea { resize: vertical; min-height: 50px; }
+    .field-group select { background: white; }
 
-  .array-section { margin: .5rem 0; padding: .6rem; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0; }
-  .array-section .array-title { font-size: .8rem; font-weight: 700; color: var(--muted); margin-bottom: .4rem; }
-  .array-item { padding: .5rem; background: #fff; border-radius: 4px; margin-bottom: .4rem; border: 1px solid #e2e8f0; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+    .field-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .5rem; }
 
-  .add-btn {
-    display: inline-flex; align-items: center; gap: .3rem;
-    margin-top: .4rem; padding: .3rem .8rem; border: 1px dashed #94a3b8;
-    border-radius: 5px; background: transparent; color: var(--muted);
-    font-size: .78rem; cursor: pointer; transition: .15s;
-  }
-  .add-btn:hover { border-color: var(--confirmed); color: var(--confirmed); }
+    .subsection-label {
+      font-size: .78rem; font-weight: 700; color: var(--purple); text-transform: uppercase;
+      margin: .75rem 0 .4rem; padding-top: .5rem; border-top: 1px dashed #e2e8f0;
+    }
+    .subsection-label.doc { color: var(--accent); }
 
-  .token-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,.5);
-    display: flex; align-items: center; justify-content: center; z-index: 200;
-  }
-  .token-box {
-    background: #fff; padding: 2rem; border-radius: 12px;
-    max-width: 480px; width: 90%; text-align: center;
-  }
-  .token-box h2 { margin-bottom: .5rem; }
-  .token-box p { font-size: .9rem; color: var(--muted); margin-bottom: 1rem; }
-  .token-box input {
-    width: 100%; padding: .6rem; border: 1px solid var(--border);
-    border-radius: 6px; font-size: .95rem; text-align: center;
-    font-family: monospace; margin-bottom: 1rem;
-  }
-  .token-box .remember { font-size: .82rem; color: var(--muted); margin-bottom: 1rem; }
-  .token-box .remember input { width: auto; margin-right: .3rem; }
-  .token-box .btn-skip { margin-left: .5rem; }
+    /* GitHub modal */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5);
+      z-index: 100; align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--card); border-radius: 12px; padding: 1.5rem; width: 90%; max-width: 460px;
+    }
+    .modal h3 { margin-bottom: 1rem; }
+    .modal .field-group { margin-bottom: .75rem; }
+    .modal-actions { display: flex; gap: .5rem; justify-content: flex-end; margin-top: 1rem; }
 
-  @media (max-width: 700px) {
-    .field-row { grid-template-columns: 1fr; }
-    .toolbar { flex-direction: column; align-items: stretch; }
-  }
-</style>
+    .chevron { font-size: .9rem; color: var(--muted); }
+    .loading { text-align: center; padding: 3rem; color: var(--muted); }
+    .error { text-align: center; padding: 3rem; color: var(--red); }
+    .toast {
+      position: fixed; bottom: 2rem; right: 2rem; background: #2d3748; color: white;
+      padding: .75rem 1.25rem; border-radius: 8px; font-size: .85rem; z-index: 200;
+      opacity: 0; transition: opacity .3s;
+    }
+    .toast.show { opacity: 1; }
+
+    @media (max-width: 640px) {
+      .field-row, .field-row-3 { grid-template-columns: 1fr; }
+      .toolbar { padding: .75rem 1rem; }
+    }
+  </style>
 </head>
 <body>
 
-<header>
-  <div>
-    <h1>DPP Editor — Mueble</h1>
-    <div class="subtitle">Editar datos del Pasaporte Digital de Producto</div>
-  </div>
-</header>
+  <header class="app-header">
+    <h1>✏️ Editor DPP Mueble</h1>
+    <p>Edita los 42 atributos, documentos fuente y evidencia Trackline</p>
+  </header>
 
-<div class="toolbar">
-  <button class="btn btn-primary" id="btn-save" onclick="saveToGitHub()" disabled>Guardar en GitHub</button>
-  <button class="btn btn-secondary" id="btn-download" onclick="downloadJSON()">Descargar JSON</button>
-  <button class="btn btn-secondary" onclick="location.href='index.html'">Ver DPP</button>
-  <button class="btn btn-secondary" onclick="loadData()">Recargar datos</button>
-  <span class="status-msg" id="status-msg"></span>
-</div>
-
-<div class="container" id="editor"></div>
-
-<!-- Token Modal -->
-<div class="token-overlay" id="token-modal" style="display:none">
-  <div class="token-box">
-    <h2>GitHub Token</h2>
-    <p>Introduce tu Personal Access Token de GitHub con permiso <code>public_repo</code> para guardar cambios directamente en el repositorio.</p>
-    <input type="password" id="token-input" placeholder="ghp_xxxxxxxxxxxxxxxxx" />
-    <div class="remember">
-      <label><input type="checkbox" id="token-remember" checked> Recordar en este navegador</label>
+  <nav class="nav-bar">
+    <div class="nav-links">
+      <a href="index.html">Visor</a>
+      <a href="edit.html" class="active">Editor</a>
     </div>
-    <button class="btn btn-primary" onclick="submitToken()">Continuar</button>
-    <button class="btn btn-secondary btn-skip" onclick="skipToken()">Saltar (solo local)</button>
+  </nav>
+
+  <div class="toolbar">
+    <button class="btn-outline" onclick="loadFromFile()">📂 Cargar JSON</button>
+    <button class="btn-primary" onclick="downloadJSON()">💾 Descargar JSON</button>
+    <button class="btn-green" onclick="openGitHubModal()">🚀 Guardar en GitHub</button>
+    <span class="spacer"></span>
+    <span class="status-msg" id="statusMsg">Sin cambios</span>
   </div>
-</div>
 
-<script>
-// ─── CONFIG: Change these for your GitHub repo ───
-const OWNER = 'edupeter';
-const REPO  = 'dpp-furniture-passport';
-const PATH  = 'data/dpp.json';
-const API   = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
+  <main class="container" id="editor-root">
+    <div class="loading">Cargando editor…</div>
+  </main>
 
-const SECTIONS_ORDER = [
-  'productIdentification', 'materialComposition', 'chemicalSafety',
-  'carbonFootprint', 'durability', 'repairability',
-  'circularityAndDisassembly', 'packaging', 'supplyChain', 'complianceAndDigital'
-];
+  <!-- GitHub Modal -->
+  <div class="modal-overlay" id="ghModal">
+    <div class="modal">
+      <h3>Guardar en GitHub</h3>
+      <div class="field-group">
+        <label>Token de acceso personal (PAT)</label>
+        <input type="password" id="ghToken" placeholder="ghp_...">
+      </div>
+      <div class="field-group">
+        <label>Repositorio (usuario/repo)</label>
+        <input type="text" id="ghRepo" value="edupeter/dpp-furniture-passport">
+      </div>
+      <div class="field-group">
+        <label>Archivo destino</label>
+        <input type="text" id="ghPath" value="data/dpp.json">
+      </div>
+      <div class="field-group">
+        <label>Mensaje de commit</label>
+        <input type="text" id="ghMsg" value="Actualización DPP desde editor web">
+      </div>
+      <div class="modal-actions">
+        <button class="btn-outline" onclick="closeGitHubModal()">Cancelar</button>
+        <button class="btn-green" onclick="saveToGitHub()">Guardar</button>
+      </div>
+    </div>
+  </div>
 
-const SECTION_META = {
-  productIdentification: { icon: '📋', title: 'Identificacion del producto' },
-  materialComposition: { icon: '🪵', title: 'Materiales y BOM' },
-  chemicalSafety: { icon: '⚗️', title: 'Seguridad quimica' },
-  carbonFootprint: { icon: '🌍', title: 'Huella de carbono y energia' },
-  durability: { icon: '🔨', title: 'Durabilidad' },
-  repairability: { icon: '🔧', title: 'Reparabilidad' },
-  circularityAndDisassembly: { icon: '♻️', title: 'Desmontaje y circularidad' },
-  packaging: { icon: '📦', title: 'Embalaje' },
-  supplyChain: { icon: '🔗', title: 'Cadena de suministro' },
-  complianceAndDigital: { icon: '✅', title: 'Conformidad y soporte digital' }
-};
+  <div class="toast" id="toast"></div>
 
-let dppData = null;
-let fileSha = null;
-let token = null;
-let dirty = false;
-let useGitHub = false;
+  <input type="file" id="fileInput" accept=".json" style="display:none" onchange="handleFileLoad(event)">
 
-const STATUSES = ['confirmed', 'partial', 'assumed', 'pending'];
+  <script>
+    let dppData = null;
+    let dirty = false;
 
-function statusClass(sel) { sel.className = 'status-select ' + sel.value; }
-
-// ─── Init ───
-window.addEventListener('DOMContentLoaded', () => {
-  token = sessionStorage.getItem('dpp_furniture_token');
-  if (!token) {
-    document.getElementById('token-modal').style.display = 'flex';
-  } else {
-    useGitHub = true;
-    loadData();
-  }
-});
-
-function submitToken() {
-  const v = document.getElementById('token-input').value.trim();
-  if (!v) return;
-  token = v;
-  useGitHub = true;
-  if (document.getElementById('token-remember').checked) {
-    sessionStorage.setItem('dpp_furniture_token', v);
-  }
-  document.getElementById('token-modal').style.display = 'none';
-  loadData();
-}
-
-function skipToken() {
-  useGitHub = false;
-  document.getElementById('token-modal').style.display = 'none';
-  document.getElementById('btn-save').style.display = 'none';
-  loadData();
-}
-
-// ─── Load ───
-async function loadData() {
-  setStatus('Cargando datos...', 'busy');
-  try {
-    if (useGitHub && token) {
-      const resp = await fetch(API, {
-        headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
-      });
-      if (resp.ok) {
-        const json = await resp.json();
-        fileSha = json.sha;
-        const content = atob(json.content.replace(/\n/g, ''));
-        const bytes = Uint8Array.from(content, c => c.charCodeAt(0));
-        dppData = JSON.parse(new TextDecoder('utf-8').decode(bytes));
-      } else {
-        // Fallback to local
-        const resp2 = await fetch('data/dpp.json');
-        dppData = await resp2.json();
-      }
-    } else {
-      const resp = await fetch('data/dpp.json');
-      dppData = await resp.json();
+    /* ── helpers ── */
+    function humanKey(key) {
+      return key.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase()).replace(/_/g, ' ');
     }
-    renderEditor();
-    setStatus('Datos cargados', 'ok');
-    document.getElementById('btn-save').disabled = true;
-    dirty = false;
-  } catch (e) {
-    setStatus('Error al cargar: ' + e.message, 'err');
-  }
-}
-
-// ─── Save to GitHub ───
-async function saveToGitHub() {
-  if (!dirty || !useGitHub) return;
-  setStatus('Guardando...', 'busy');
-  document.getElementById('btn-save').disabled = true;
-  try {
-    collectFormData();
-    const jsonStr = JSON.stringify(dppData, null, 2) + '\n';
-    const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
-    const resp = await fetch(API, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        message: `Update DPP furniture data via editor (${new Date().toISOString().slice(0, 10)})`,
-        content: encoded,
-        sha: fileSha
-      })
-    });
-    if (!resp.ok) {
-      const err = await resp.json();
-      throw new Error(err.message || `HTTP ${resp.status}`);
+    function showToast(msg, ms = 3000) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), ms);
     }
-    const result = await resp.json();
-    fileSha = result.content.sha;
-    dirty = false;
-    setStatus('Guardado en GitHub — cambios visibles en ~1 min', 'ok');
-  } catch (e) {
-    setStatus('Error al guardar: ' + e.message, 'err');
-    document.getElementById('btn-save').disabled = false;
-  }
-}
-
-// ─── Download JSON ───
-function downloadJSON() {
-  collectFormData();
-  const jsonStr = JSON.stringify(dppData, null, 2);
-  const blob = new Blob([jsonStr], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'dpp.json';
-  a.click();
-  URL.revokeObjectURL(a.href);
-  setStatus('JSON descargado', 'ok');
-}
-
-function markDirty() {
-  dirty = true;
-  document.getElementById('btn-save').disabled = false;
-  setStatus('Cambios sin guardar', 'busy');
-}
-
-function setStatus(msg, type) {
-  const el = document.getElementById('status-msg');
-  el.textContent = msg;
-  el.className = 'status-msg ' + type;
-}
-
-// ─── Render editor ───
-function renderEditor() {
-  const root = document.getElementById('editor');
-  root.innerHTML = '';
-
-  SECTIONS_ORDER.forEach(key => {
-    if (!dppData[key]) return;
-    const meta = SECTION_META[key] || {};
-    const sec = buildSection(meta.icon || '📄', meta.title || formatLabel(key), key, dppData[key]);
-    root.appendChild(sec);
-  });
-}
-
-function buildSection(icon, title, dataKey, data) {
-  const wrap = document.createElement('div');
-  wrap.className = 'section';
-  const header = document.createElement('div');
-  header.className = 'section-header';
-  header.innerHTML = `<span class="arrow">▼</span> ${icon} ${title}`;
-  const body = document.createElement('div');
-  body.className = 'section-body';
-  header.onclick = () => {
-    header.classList.toggle('collapsed');
-    body.classList.toggle('hidden');
-  };
-  renderFields(body, data, dataKey);
-  wrap.appendChild(header);
-  wrap.appendChild(body);
-  return wrap;
-}
-
-function renderFields(container, obj, path) {
-  for (const key of Object.keys(obj)) {
-    if (key.startsWith('_')) continue;
-    const val = obj[key];
-    if (Array.isArray(val)) {
-      container.appendChild(buildArraySection(key, val, path + '.' + key));
-    } else if (val && typeof val === 'object' && ('value' in val || '_status' in val || 'url' in val)) {
-      container.appendChild(buildFieldRow(key, val, path + '.' + key));
-    } else if (val && typeof val === 'object') {
-      const sub = document.createElement('div');
-      sub.className = 'array-section';
-      const t = document.createElement('div');
-      t.className = 'array-title';
-      t.textContent = formatLabel(key);
-      sub.appendChild(t);
-      renderFields(sub, val, path + '.' + key);
-      container.appendChild(sub);
+    function markDirty() {
+      dirty = true;
+      document.getElementById('statusMsg').textContent = '● Cambios sin guardar';
+      document.getElementById('statusMsg').style.color = '#e53e3e';
     }
-  }
-}
 
-function buildFieldRow(key, fieldObj, path) {
-  const row = document.createElement('div');
-  row.className = 'field-row';
+    /* ── build editor ── */
+    function buildEditor() {
+      const root = document.getElementById('editor-root');
+      if (!dppData) { root.innerHTML = '<div class="error">Sin datos</div>'; return; }
 
-  const label = document.createElement('div');
-  label.className = 'field-label';
-  let labelText = formatLabel(key);
-  if (fieldObj.unit) labelText += ` (${fieldObj.unit})`;
-  label.textContent = labelText;
+      let html = '';
+      Object.entries(dppData).forEach(([sKey, section]) => {
+        if (sKey === '_meta') return;
+        const icon = section._icon || '📁';
+        const title = section._title || humanKey(sKey);
 
-  const inputWrap = document.createElement('div');
-  inputWrap.className = 'field-input';
+        html += `<div class="edit-section">
+          <div class="edit-section-header" onclick="toggleEditSection('${sKey}')">
+            <span>${icon}</span><h2>${title}</h2><span class="chevron" id="echev-${sKey}">▼</span>
+          </div>
+          <div class="edit-section-body" id="ebody-${sKey}">`;
 
-  // Determine main value field
-  const isUrl = 'url' in fieldObj && !('value' in fieldObj);
-  const mainVal = isUrl ? fieldObj.url : fieldObj.value;
+        Object.entries(section).forEach(([aKey, attr]) => {
+          if (aKey.startsWith('_')) return;
+          const metaKeys = ['_status','_legalBasis','_sourceDocument','_evidence','_note'];
 
-  const inp = document.createElement('input');
-  inp.type = 'text';
-  inp.value = mainVal === null || mainVal === undefined ? '' : String(mainVal);
-  inp.placeholder = isUrl ? 'https://...' : 'Valor...';
-  inp.dataset.path = path;
-  inp.dataset.field = isUrl ? 'url' : 'value';
-  inp.oninput = markDirty;
-  inputWrap.appendChild(inp);
+          html += `<div class="edit-attr">
+            <div class="edit-attr-title">
+              <h3>${humanKey(aKey)}</h3>
+            </div>`;
 
-  // Additional scalar fields (not arrays, not objects, not _meta)
-  const skipFields = new Set(['value', 'url', '_status', '_note', '_source', '_icon', '_title', 'unit']);
-  for (const k of Object.keys(fieldObj)) {
-    if (skipFields.has(k) || k.startsWith('_')) continue;
-    const v = fieldObj[k];
-    if (v !== null && v !== undefined && typeof v !== 'object') {
-      const extraRow = document.createElement('div');
-      extraRow.className = 'note-row';
-      const extraInp = document.createElement('input');
-      extraInp.type = 'text';
-      extraInp.value = String(v);
-      extraInp.placeholder = formatLabel(k);
-      extraInp.title = formatLabel(k);
-      extraInp.dataset.path = path;
-      extraInp.dataset.field = k;
-      extraInp.oninput = markDirty;
-      extraInp.style.fontSize = '.78rem';
-      const extraLabel = document.createElement('span');
-      extraLabel.style.cssText = 'font-size:.7rem;color:#94a3b8;';
-      extraLabel.textContent = formatLabel(k) + ': ';
-      extraRow.appendChild(extraLabel);
-      extraRow.appendChild(extraInp);
-      inputWrap.appendChild(extraRow);
-    }
-  }
+          // Status selector
+          html += `<div class="field-row">
+            <div class="field-group">
+              <label>Estado</label>
+              <select data-path="${sKey}.${aKey}._status" onchange="updateField(this)">
+                <option value="pending" ${attr._status==='pending'?'selected':''}>🔴 Pendiente</option>
+                <option value="partial" ${attr._status==='partial'?'selected':''}>🟡 Parcial</option>
+                <option value="verified" ${attr._status==='verified'?'selected':''}>✅ Verificado</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label>Base jurídica</label>
+              <input type="text" value="${attr._legalBasis||''}" data-path="${sKey}.${aKey}._legalBasis" onchange="updateField(this)">
+            </div>
+          </div>`;
 
-  // Note
-  const noteRow = document.createElement('div');
-  noteRow.className = 'note-row';
-  const noteInp = document.createElement('input');
-  noteInp.type = 'text';
-  noteInp.value = fieldObj._note || '';
-  noteInp.placeholder = 'Nota...';
-  noteInp.dataset.path = path;
-  noteInp.dataset.field = '_note';
-  noteInp.oninput = markDirty;
-  noteRow.appendChild(noteInp);
-  inputWrap.appendChild(noteRow);
+          // Data fields
+          Object.entries(attr).forEach(([fKey, fVal]) => {
+            if (metaKeys.includes(fKey)) return;
+            const path = `${sKey}.${aKey}.${fKey}`;
+            if (fVal !== null && typeof fVal === 'object' && !Array.isArray(fVal)) return; // skip nested objects for now
+            if (Array.isArray(fVal)) {
+              html += `<div class="field-group">
+                <label>${humanKey(fKey)}</label>
+                <input type="text" value="${fVal.join(', ')}" data-path="${path}" data-type="array" onchange="updateField(this)">
+              </div>`;
+            } else if (typeof fVal === 'boolean') {
+              html += `<div class="field-group">
+                <label>${humanKey(fKey)}</label>
+                <select data-path="${path}" data-type="bool" onchange="updateField(this)">
+                  <option value="">— seleccionar —</option>
+                  <option value="true" ${fVal===true?'selected':''}>Sí</option>
+                  <option value="false" ${fVal===false?'selected':''}>No</option>
+                </select>
+              </div>`;
+            } else {
+              html += `<div class="field-group">
+                <label>${humanKey(fKey)}</label>
+                <input type="text" value="${fVal !== null ? fVal : ''}" data-path="${path}" onchange="updateField(this)" placeholder="—">
+              </div>`;
+            }
+          });
 
-  // Status
-  const statusWrap = document.createElement('div');
-  const sel = document.createElement('select');
-  sel.className = 'status-select ' + (fieldObj._status || 'pending');
-  sel.dataset.path = path;
-  sel.dataset.field = '_status';
-  STATUSES.forEach(s => {
-    const o = document.createElement('option');
-    o.value = s;
-    o.textContent = { confirmed: 'Confirmado', partial: 'Parcial', assumed: 'Supuesto', pending: 'Pendiente' }[s];
-    if (s === fieldObj._status) o.selected = true;
-    sel.appendChild(o);
-  });
-  sel.onchange = () => { statusClass(sel); markDirty(); };
-  statusWrap.appendChild(sel);
+          // Source Document
+          if (attr._sourceDocument) {
+            const d = attr._sourceDocument;
+            html += `<div class="subsection-label doc">📄 Documento fuente</div>
+              <div class="field-row">
+                <div class="field-group">
+                  <label>Nombre documento</label>
+                  <input type="text" value="${d.name||''}" data-path="${sKey}.${aKey}._sourceDocument.name" onchange="updateField(this)">
+                </div>
+                <div class="field-group">
+                  <label>Tipo</label>
+                  <input type="text" value="${d.type||''}" data-path="${sKey}.${aKey}._sourceDocument.type" onchange="updateField(this)">
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field-group">
+                  <label>Quién genera</label>
+                  <input type="text" value="${d.generatedBy||''}" data-path="${sKey}.${aKey}._sourceDocument.generatedBy" onchange="updateField(this)">
+                </div>
+                <div class="field-group">
+                  <label>Plazo</label>
+                  <input type="text" value="${d.deadline||''}" data-path="${sKey}.${aKey}._sourceDocument.deadline" onchange="updateField(this)">
+                </div>
+              </div>`;
+          }
 
-  row.appendChild(label);
-  row.appendChild(inputWrap);
-  row.appendChild(statusWrap);
-  return row;
-}
+          // Trackline Evidence
+          if (attr._evidence) {
+            const e = attr._evidence;
+            html += `<div class="subsection-label">🔗 Evidencia Trackline (blockchain)</div>
+              <div class="field-row">
+                <div class="field-group">
+                  <label>Trackline Process ID</label>
+                  <input type="text" value="${e.tracklineProcessId||''}" data-path="${sKey}.${aKey}._evidence.tracklineProcessId" onchange="updateField(this)" placeholder="P-XXXX">
+                </div>
+                <div class="field-group">
+                  <label>Blockchain Tx Hash</label>
+                  <input type="text" value="${e.blockchainTxHash||''}" data-path="${sKey}.${aKey}._evidence.blockchainTxHash" onchange="updateField(this)" placeholder="0x…">
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field-group">
+                  <label>Fecha registro</label>
+                  <input type="date" value="${e.registeredDate||''}" data-path="${sKey}.${aKey}._evidence.registeredDate" onchange="updateField(this)">
+                </div>
+                <div class="field-group">
+                  <label>Registrado por</label>
+                  <input type="text" value="${e.registeredBy||''}" data-path="${sKey}.${aKey}._evidence.registeredBy" onchange="updateField(this)">
+                </div>
+              </div>`;
+          }
 
-function buildArraySection(key, arr, path) {
-  const wrap = document.createElement('div');
-  wrap.className = 'array-section';
-  const title = document.createElement('div');
-  title.className = 'array-title';
-  title.textContent = formatLabel(key) + ` (${arr.length})`;
-  wrap.appendChild(title);
+          // Note
+          html += `<div class="field-group" style="margin-top:.5rem">
+            <label>Nota</label>
+            <input type="text" value="${attr._note||''}" data-path="${sKey}.${aKey}._note" onchange="updateField(this)" style="font-style:italic;color:#718096">
+          </div>`;
 
-  arr.forEach((item, i) => {
-    if (typeof item === 'object' && item !== null) {
-      const itemDiv = document.createElement('div');
-      itemDiv.className = 'array-item';
-      for (const k of Object.keys(item)) {
-        if (k.startsWith('_')) continue;
-        const v = item[k];
-        if (v && typeof v === 'object' && ('value' in v || '_status' in v)) {
-          itemDiv.appendChild(buildFieldRow(k, v, `${path}[${i}].${k}`));
-        } else if (typeof v !== 'object') {
-          const row = document.createElement('div');
-          row.className = 'field-row';
-          const lbl = document.createElement('div');
-          lbl.className = 'field-label';
-          lbl.textContent = formatLabel(k);
-          const inp = document.createElement('div');
-          inp.className = 'field-input';
-          const input = document.createElement('input');
-          input.type = 'text';
-          input.value = v === null ? '' : String(v);
-          input.dataset.path = `${path}[${i}].${k}`;
-          input.dataset.field = '_scalar';
-          input.oninput = markDirty;
-          inp.appendChild(input);
-          row.appendChild(lbl);
-          row.appendChild(inp);
-          row.appendChild(document.createElement('div'));
-          itemDiv.appendChild(row);
-        }
-      }
-      if (item._status) {
-        const sRow = document.createElement('div');
-        sRow.style.cssText = 'display:flex;align-items:center;gap:.5rem;margin-top:.3rem;';
-        const sLabel = document.createElement('span');
-        sLabel.style.cssText = 'font-size:.78rem;color:#64748b;';
-        sLabel.textContent = 'Status:';
-        const sel = document.createElement('select');
-        sel.className = 'status-select ' + item._status;
-        sel.dataset.path = `${path}[${i}]`;
-        sel.dataset.field = '_status';
-        STATUSES.forEach(s => {
-          const o = document.createElement('option');
-          o.value = s;
-          o.textContent = { confirmed: 'Confirmado', partial: 'Parcial', assumed: 'Supuesto', pending: 'Pendiente' }[s];
-          if (s === item._status) o.selected = true;
-          sel.appendChild(o);
+          html += `</div>`; // close edit-attr
         });
-        sel.onchange = () => { statusClass(sel); markDirty(); };
-        sel.style.width = '130px';
-        sRow.appendChild(sLabel);
-        sRow.appendChild(sel);
-        itemDiv.appendChild(sRow);
-      }
-      wrap.appendChild(itemDiv);
+
+        html += `</div></div>`; // close body + section
+      });
+
+      root.innerHTML = html;
     }
-  });
 
-  return wrap;
-}
+    /* ── update field in data ── */
+    function updateField(el) {
+      const path = el.dataset.path.split('.');
+      let obj = dppData;
+      for (let i = 0; i < path.length - 1; i++) obj = obj[path[i]];
+      let val = el.value;
+      if (el.dataset.type === 'array') val = val.split(',').map(s => s.trim()).filter(Boolean);
+      else if (el.dataset.type === 'bool') val = val === 'true' ? true : val === 'false' ? false : null;
+      else if (val === '') val = null;
+      obj[path[path.length - 1]] = val;
+      markDirty();
+    }
 
-// ─── Collect form data ───
-function collectFormData() {
-  document.querySelectorAll('[data-path]').forEach(el => {
-    const path = el.dataset.path;
-    const field = el.dataset.field;
-    let val = el.value;
-    if (field === 'value' && val !== '' && !isNaN(val) && val.trim() !== '') val = Number(val);
-    if (val === '' && (field === 'value' || field === 'url')) val = null;
-    setNestedValue(dppData, path, field, val);
-  });
-}
-
-function setNestedValue(obj, path, field, value) {
-  const parts = path.replace(/\[(\d+)\]/g, '.$1').split('.');
-  let current = obj;
-  for (let i = 0; i < parts.length; i++) {
-    const key = isNaN(parts[i]) ? parts[i] : Number(parts[i]);
-    if (i === parts.length - 1) {
-      if (field === '_scalar') {
-        current[key] = value === '' ? null : value;
+    /* ── section toggle ── */
+    function toggleEditSection(key) {
+      const body = document.getElementById('ebody-' + key);
+      const chev = document.getElementById('echev-' + key);
+      if (body.classList.contains('collapsed')) {
+        body.classList.remove('collapsed'); chev.textContent = '▼';
       } else {
-        if (current[key] && typeof current[key] === 'object') {
-          current[key][field] = value;
-        }
+        body.classList.add('collapsed'); chev.textContent = '▶';
       }
-    } else {
-      current = current[key];
-      if (!current) return;
     }
-  }
-}
 
-function formatLabel(key) {
-  return key
-    .replace(/([A-Z])/g, ' $1')
-    .replace(/^./, s => s.toUpperCase())
-    .replace(/_/g, ' ')
-    .replace(/  +/g, ' ')
-    .trim();
-}
-</script>
+    /* ── file I/O ── */
+    function loadFromFile() { document.getElementById('fileInput').click(); }
+    function handleFileLoad(e) {
+      const file = e.target.files[0]; if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          dppData = JSON.parse(ev.target.result);
+          buildEditor();
+          showToast('Archivo cargado: ' + file.name);
+        } catch (err) { showToast('Error: JSON inválido'); }
+      };
+      reader.readAsText(file);
+    }
+
+    function downloadJSON() {
+      if (!dppData) return;
+      // Update date
+      if (dppData._meta) dppData._meta.generatedDate = new Date().toISOString().slice(0, 10);
+      const blob = new Blob([JSON.stringify(dppData, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      a.download = 'dpp.json'; a.click(); URL.revokeObjectURL(a.href);
+      dirty = false;
+      document.getElementById('statusMsg').textContent = 'Descargado ✓';
+      document.getElementById('statusMsg').style.color = '#38a169';
+      showToast('JSON descargado');
+    }
+
+    /* ── GitHub save ── */
+    function openGitHubModal() { document.getElementById('ghModal').classList.add('open'); }
+    function closeGitHubModal() { document.getElementById('ghModal').classList.remove('open'); }
+
+    async function saveToGitHub() {
+      const token = document.getElementById('ghToken').value.trim();
+      const repo = document.getElementById('ghRepo').value.trim();
+      const path = document.getElementById('ghPath').value.trim();
+      const msg = document.getElementById('ghMsg').value.trim();
+      if (!token || !repo || !path) { showToast('Completa todos los campos'); return; }
+
+      if (dppData._meta) dppData._meta.generatedDate = new Date().toISOString().slice(0, 10);
+      const content = btoa(unescape(encodeURIComponent(JSON.stringify(dppData, null, 2))));
+
+      try {
+        // Get current file SHA
+        const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        let sha = null;
+        if (getRes.ok) { sha = (await getRes.json()).sha; }
+
+        const body = { message: msg, content: content };
+        if (sha) body.sha = sha;
+
+        const putRes = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+          method: 'PUT',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+
+        if (putRes.ok) {
+          showToast('Guardado en GitHub ✓');
+          dirty = false;
+          document.getElementById('statusMsg').textContent = 'Guardado en GitHub ✓';
+          document.getElementById('statusMsg').style.color = '#38a169';
+          closeGitHubModal();
+        } else {
+          const err = await putRes.json();
+          showToast('Error: ' + (err.message || putRes.status));
+        }
+      } catch (err) {
+        showToast('Error de conexión: ' + err.message);
+      }
+    }
+
+    /* ── init ── */
+    async function init() {
+      try {
+        const res = await fetch('data/dpp.json');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        dppData = await res.json();
+        buildEditor();
+      } catch (err) {
+        document.getElementById('editor-root').innerHTML =
+          `<div class="error">Error: ${err.message}<br>Usa "Cargar JSON" para abrir un archivo local.</div>`;
+      }
+    }
+
+    init();
+  </script>
 </body>
 </html>
