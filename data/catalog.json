@@ -1,0 +1,35 @@
+{
+  "_meta": {
+    "schema": "DPP Furniture Catalog v0.1",
+    "description": "Catálogo de productos con DPP disponible",
+    "lastUpdated": "2026-04-14"
+  },
+  "manufacturers": [
+    {
+      "id": "ondarreta",
+      "name": "Ondarreta S.A.",
+      "location": "Itziar-Deba, Gipuzkoa",
+      "country": "España",
+      "cluster": "HABIC / Basque Living",
+      "products": [
+        {
+          "id": "hari-chair",
+          "name": "Hari Chair (4 patas madera, asiento tapizado)",
+          "family": "Hari",
+          "category": "Asientos",
+          "cnCode": "9401 61 00",
+          "dppFile": "dpp-hari-example.json",
+          "dppStatus": "draft",
+          "completionPct": 26,
+          "tracklineEvidence": true,
+          "epdNumber": "S-P-08979"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "totalManufacturers": 1,
+    "totalProducts": 1,
+    "averageCompletion": 26
+  }
+}
