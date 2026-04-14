@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DPP Mueble - Generador QR GS1 Digital Link</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#f5f7fa;--card:#fff;--border:#e2e8f0;--text:#1a202c;--muted:#718096;--accent:#2b6cb0;--green:#38a169;--purple:#6b46c1}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.app-header{background:linear-gradient(135deg,#22543d,#38a169);color:#fff;padding:2rem;text-align:center}
+.app-header h1{font-size:1.6rem;margin-bottom:.25rem}
+.app-header p{opacity:.85;font-size:.9rem}
+.nav-bar{background:var(--card);border-bottom:1px solid var(--border);padding:.75rem 2rem;display:flex;gap:.5rem}
+.nav-bar a{text-decoration:none;color:var(--accent);font-weight:600;font-size:.9rem;padding:.4rem .8rem;border-radius:6px}
+.nav-bar a:hover{background:#ebf4ff}
+.nav-bar a.active{background:var(--green);color:#fff}
+.container{max-width:800px;margin:0 auto;padding:1.5rem}
+.card{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:1.5rem;margin-bottom:1.5rem}
+.card h2{font-size:1.1rem;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+.field-group{margin-bottom:1rem}
+.field-group label{display:block;font-size:.85rem;font-weight:600;color:var(--muted);margin-bottom:.25rem}
+.field-group input,.field-group select{width:100%;padding:.5rem .75rem;border:1px solid var(--border);border-radius:8px;font-size:.9rem}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.btn{padding:.6rem 1.5rem;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--green);color:#fff}.btn-primary:hover{background:#2f855a}
+.btn-outline{background:#fff;border:1px solid var(--border);color:var(--text)}.btn-outline:hover{background:#f7fafc}
+.btn-row{display:flex;gap:.75rem;margin-top:1rem}
+.result{margin-top:1.5rem;text-align:center}
+.result .qr-container{display:inline-block;padding:1.5rem;background:#fff;border-radius:12px;border:2px solid var(--green);margin-bottom:1rem}
+.result .url-display{background:#f7fafc;border:1px solid var(--border);border-radius:8px;padding:.75rem;font-family:monospace;font-size:.85rem;word-break:break-all;margin:.75rem 0}
+.info-box{background:#ebf8ff;border:1px solid #bee3f8;border-radius:8px;padding:1rem;font-size:.85rem;margin-bottom:1rem}
+.info-box strong{color:var(--accent)}
+.format-example{background:#f7fafc;border:1px solid var(--border);border-radius:8px;padding:.75rem;font-family:monospace;font-size:.82rem;margin:.5rem 0}
+.label-preview{margin-top:1rem;border:2px dashed var(--border);border-radius:8px;padding:1.5rem;text-align:center}
+.label-preview h3{font-size:.9rem;color:var(--muted);margin-bottom:.5rem}
+.label-company{font-size:.75rem;color:var(--muted)}
+.label-product{font-size:1rem;font-weight:700;margin:.25rem 0}
+.label-ref{font-size:.8rem;color:var(--accent)}
+.label-legal{font-size:.7rem;color:var(--muted);margin-top:.5rem}
+.footer{text-align:center;padding:2rem;font-size:.8rem;color:var(--muted)}
+.footer a{color:var(--accent)}
+@media(max-width:640px){.field-row{grid-template-columns:1fr}.container{padding:1rem}}
+</style>
+</head>
+<body>
+<header class="app-header">
+<h1>Generador QR - GS1 Digital Link</h1>
+<p>Genera el QR code con formato GS1 Digital Link para el DPP de tu producto</p>
+</header>
+<nav class="nav-bar">
+<a href="index.html">Visor</a>
+<a href="edit.html">Editor</a>
+<a href="qr.html" class="active">QR Generator</a>
+</nav>
+<main class="container">
+<div class="info-box">
+<strong>ESPR Art. 9(3) y Art. 11:</strong> Cada producto con DPP debe llevar un soporte de datos (QR code) que enlace al pasaporte digital. El formato recomendado es <strong>GS1 Digital Link</strong>, que codifica el GTIN en la URL.
+<div class="format-example">https://id.gs1.org/01/<strong>{GTIN-13 o GTIN-14}</strong></div>
+</div>
+
+<div class="card">
+<h2>Datos del producto</h2>
+<div class="field-row">
+<div class="field-group">
+<label>Empresa / Fabricante</label>
+<input type="text" id="qrCompany" value="Ondarreta S.A." placeholder="Nombre de la empresa">
+</div>
+<div class="field-group">
+<label>Producto</label>
+<input type="text" id="qrProduct" value="Hari Chair" placeholder="Nombre del producto">
+</div>
+</div>
+<div class="field-row">
+<div class="field-group">
+<label>GTIN (13 o 14 digitos)</label>
+<input type="text" id="qrGTIN" placeholder="8400000000000" maxlength="14" oninput="updatePreview()">
+</div>
+<div class="field-group">
+<label>Referencia del modelo</label>
+<input type="text" id="qrRef" value="Hari (4W-TP)" placeholder="Ref. interna">
+</div>
+</div>
+<div class="field-group">
+<label>URL del DPP (se genera automaticamente o introduce manualmente)</label>
+<input type="text" id="qrDPPUrl" placeholder="Se genera al pulsar el boton">
+</div>
+<div class="field-group">
+<label>Tipo de enlace QR</label>
+<select id="qrType" onchange="updatePreview()">
+<option value="gs1">GS1 Digital Link (id.gs1.org/01/GTIN)</option>
+<option value="dpp">URL directa al DPP viewer</option>
+</select>
+</div>
+<div class="btn-row">
+<button class="btn btn-primary" onclick="generateQR()">Generar QR Code</button>
+<button class="btn btn-outline" onclick="downloadQR()">Descargar PNG</button>
+<button class="btn btn-outline" onclick="printLabel()">Imprimir etiqueta</button>
+</div>
+</div>
+
+<div class="card result" id="resultCard" style="display:none">
+<h2>QR Code generado</h2>
+<div class="qr-container" id="qrCode"></div>
+<div class="url-display" id="urlDisplay"></div>
+<div class="label-preview" id="labelPreview">
+<h3>Vista previa etiqueta</h3>
+<div id="labelContent"></div>
+</div>
+</div>
+</main>
+<footer class="footer">
+DPP Mueble v0.3 - <a href="index.html">Volver al visor</a>
+- Formato: <a href="https://www.gs1.org/standards/gs1-digital-link" target="_blank">GS1 Digital Link</a>
+- ESPR Art. 9(3), Art. 11
+</footer>
+<script>
+var qrInstance = null;
+
+function getQRUrl() {
+  var gtin = document.getElementById('qrGTIN').value.trim();
+  var type = document.getElementById('qrType').value;
+  var manual = document.getElementById('qrDPPUrl').value.trim();
+  if (manual) return manual;
+  if (type === 'gs1' && gtin) {
+    return 'https://id.gs1.org/01/' + gtin;
+  }
+  if (type === 'dpp') {
+    var product = document.getElementById('qrProduct').value.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    return 'https://edupeter.github.io/dpp-furniture-passport/?id=' + (product || 'hari-chair');
+  }
+  return '';
+}
+
+function updatePreview() {
+  var url = getQRUrl();
+  document.getElementById('qrDPPUrl').placeholder = url || 'Introduce GTIN para generar';
+}
+
+function generateQR() {
+  var url = getQRUrl();
+  if (!url) { alert('Introduce un GTIN o una URL manual'); return; }
+  var container = document.getElementById('qrCode');
+  container.innerHTML = '';
+  qrInstance = new QRCode(container, {
+    text: url,
+    width: 200,
+    height: 200,
+    colorDark: '#1a202c',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+  document.getElementById('urlDisplay').textContent = url;
+  // Label
+  var company = document.getElementById('qrCompany').value;
+  var product = document.getElementById('qrProduct').value;
+  var ref = document.getElementById('qrRef').value;
+  var gtin = document.getElementById('qrGTIN').value;
+  document.getElementById('labelContent').innerHTML =
+    '<div class="label-company">' + company + '</div>' +
+    '<div class="label-product">' + product + '</div>' +
+    '<div class="label-ref">' + ref + (gtin ? ' | GTIN: ' + gtin : '') + '</div>' +
+    '<div class="label-legal">DPP conforme ESPR (UE) 2024/1781</div>';
+  document.getElementById('resultCard').style.display = '';
+}
+
+function downloadQR() {
+  var canvas = document.querySelector('#qrCode canvas');
+  if (!canvas) { alert('Genera el QR primero'); return; }
+  var a = document.createElement('a');
+  a.download = 'dpp-qr-' + (document.getElementById('qrGTIN').value || 'product') + '.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+}
+
+function printLabel() {
+  var content = document.getElementById('resultCard');
+  if (!content) return;
+  var w = window.open('', '_blank');
+  w.document.write('<html><head><title>Etiqueta DPP</title><style>body{font-family:sans-serif;text-align:center;padding:2rem}img,canvas{max-width:200px}.label-company{font-size:10px;color:#666}.label-product{font-size:16px;font-weight:700}.label-ref{font-size:11px;color:#2b6cb0}.label-legal{font-size:9px;color:#999;margin-top:8px}</style></head><body>');
+  w.document.write(content.innerHTML);
+  w.document.write('</body></html>');
+  w.document.close();
+  w.print();
+}
+
+updatePreview();
+</script>
+</body>
+</html>
