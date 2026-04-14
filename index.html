@@ -24,17 +24,37 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .dpp-meta{background:var(--card);border-radius:12px;padding:1.25rem 1.5rem;border:1px solid var(--border);margin-bottom:1.5rem}
 .meta-row{font-size:.85rem;color:var(--muted);padding:.15rem 0}
 .meta-row strong{color:var(--text)}
-.dpp-summary{background:var(--card);border-radius:12px;padding:1.5rem;border:1px solid var(--border);margin-bottom:1.5rem;display:flex;align-items:center;gap:2rem;flex-wrap:wrap}
-.summary-ring{position:relative;width:120px;height:120px;flex-shrink:0}
-.summary-ring svg{transform:rotate(-90deg)}
+
+/* Dashboard ejecutivo */
+.dpp-dashboard{background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:1.5rem;overflow:hidden}
+.dashboard-header{background:linear-gradient(135deg,#1a365d,#2b6cb0);color:#fff;padding:1rem 1.5rem}
+.dashboard-header h2{font-size:1.1rem;margin:0}
+.dashboard-grid{display:flex;align-items:center;gap:2rem;padding:1.5rem;flex-wrap:wrap}
+.dashboard-ring{position:relative;width:120px;height:120px;flex-shrink:0}
+.dashboard-ring svg{transform:rotate(-90deg)}
 .ring-bg{fill:none;stroke:#e2e8f0;stroke-width:10}
 .ring-fill{fill:none;stroke:var(--green);stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset .8s ease}
 .ring-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:700;color:var(--green)}
-.summary-title{font-size:1.1rem;font-weight:700;margin-bottom:.5rem}
-.stat{font-size:.9rem;padding:.1rem 0;display:flex;align-items:center;gap:.4rem}
-.stat-total{margin-top:.5rem;font-size:.85rem;color:var(--muted)}
+.dashboard-stats{flex:1;min-width:160px}
+.stat{font-size:.9rem;padding:.15rem 0;display:flex;align-items:center;gap:.4rem}
+.stat-total{margin-top:.5rem;font-size:.82rem;color:var(--muted)}
 .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
 .dot-v{background:var(--green)}.dot-pa{background:var(--amber)}.dot-pe{background:var(--red)}
+.dashboard-kpis{display:flex;gap:1rem;flex-wrap:wrap}
+.kpi{background:#f7fafc;border:1px solid var(--border);border-radius:10px;padding:.75rem 1rem;text-align:center;min-width:80px}
+.kpi-number{display:block;font-size:1.5rem;font-weight:700;color:var(--accent)}
+.kpi-label{font-size:.72rem;color:var(--muted);display:block;margin-top:.15rem}
+.dashboard-urgent{padding:0 1.5rem 1.25rem;font-size:.85rem}
+.dashboard-urgent ul{list-style:none;margin-top:.5rem}
+.dashboard-urgent li{padding:.25rem 0;border-bottom:1px solid #f0f0f0}
+.dashboard-urgent li:last-child{border-bottom:none}
+.urgent-section{color:var(--muted);font-size:.78rem}
+
+/* Registry highlight */
+.registry-highlight{border:2px solid var(--purple);box-shadow:0 2px 12px rgba(107,70,193,.12)}
+.registry-highlight .section-header{background:linear-gradient(135deg,#faf5ff,#f3e8ff);border-bottom-color:#e9d8fd}
+.registry-highlight .section-icon{color:var(--purple)}
+
 .filter-bar{display:flex;gap:.5rem;margin-bottom:1.5rem;flex-wrap:wrap}
 .filter-btn{padding:.45rem 1rem;border:1px solid var(--border);border-radius:20px;background:var(--card);font-size:.85rem;cursor:pointer}
 .filter-btn:hover{border-color:var(--accent)}
@@ -42,7 +62,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .dpp-section{background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:1rem;overflow:hidden}
 .section-header{padding:1rem 1.25rem;cursor:pointer;display:flex;align-items:center;gap:.75rem;background:#fafbfc;border-bottom:1px solid var(--border)}
 .section-header:hover{background:#f0f4f8}
-.section-icon{font-size:1rem;font-weight:700;color:var(--accent)}
+.section-icon{font-size:1.2rem}
 .section-header h2{font-size:1.05rem;flex:1}
 .section-counts{display:flex;gap:.35rem}
 .cnt{width:24px;height:24px;border-radius:50%;font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;color:#fff}
@@ -69,14 +89,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .legal-proyeccion{background:#fefcbf;color:#744210}
 .legal-pendiente{background:#e9d8fd;color:#44337a}
 .source-doc{display:flex;align-items:flex-start;gap:.5rem;background:#f7fafc;border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;margin-bottom:.5rem}
-.doc-icon{font-size:1rem;font-weight:700;color:var(--accent)}
+.doc-icon{font-size:1rem}
 .doc-info{display:flex;flex-direction:column;font-size:.8rem}
 .doc-info strong{font-size:.85rem;color:var(--text)}
 .doc-type{color:var(--accent)}.doc-gen,.doc-deadline{color:var(--muted)}
 .trackline-badge{display:flex;align-items:flex-start;gap:.5rem;border-radius:8px;padding:.6rem .8rem;font-size:.8rem}
 .trackline-badge.verified{background:#e9d8fd;border:1px solid #d6bcfa}
 .trackline-badge.pending{background:#f7fafc;border:1px solid var(--border)}
-.tl-icon{font-size:.9rem;font-weight:700;color:var(--purple)}
+.tl-icon{font-size:.9rem}
 .tl-info{display:flex;flex-direction:column}
 .tl-info strong{color:var(--purple);font-size:.85rem}
 .tl-hash{font-family:monospace;font-size:.75rem;color:var(--purple)}
@@ -91,7 +111,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .app-footer a{color:var(--accent)}
 .loading{text-align:center;padding:3rem;color:var(--muted);font-size:1.1rem}
 .error{text-align:center;padding:3rem;color:var(--red)}
-@media(max-width:640px){.app-header h1{font-size:1.3rem}.container{padding:1rem}.dpp-summary{flex-direction:column;align-items:flex-start}}
+@media(max-width:640px){.app-header h1{font-size:1.3rem}.container{padding:1rem}.dashboard-grid{flex-direction:column;align-items:flex-start}}
 </style>
 </head>
 <body>
@@ -99,7 +119,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 <h1>Pasaporte Digital de Producto - Mueble</h1>
 <p>DPP conforme a ESPR (UE) 2024/1781 - Con trazabilidad blockchain Trackline</p>
 <div class="header-badges">
-<span>ESPR 2024/1781</span><span>REACH - EUDR</span><span>Trackline Evidence</span><span>42 atributos</span>
+<span>ESPR 2024/1781</span><span>REACH</span><span>EUDR</span><span>Trackline Evidence</span><span>Art. 13 Registry-Ready</span>
 </div>
 </header>
 <nav class="nav-bar">
@@ -107,8 +127,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 <div class="json-selector">
 <label for="jsonFile">Archivo:</label>
 <select id="jsonFile" onchange="loadSelected()">
-<option value="data/dpp.json">Plantilla vacia</option>
-<option value="data/dpp-hari-example.json">Ejemplo: Silla Hari (Ondarreta)</option>
+<option value="data/dpp.json">Plantilla DPP vacia</option>
+<option value="data/dpp-hari-example.json" selected>Ejemplo: Silla Hari (Ondarreta)</option>
 </select>
 </div>
 </nav>
@@ -123,20 +143,32 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 <div class="legend-item"><span class="legend-swatch" style="background:#fefcbf;border:1px solid #d69e2e"></span> PROYECCION - regulacion proyectada</div>
 <div class="legend-item"><span class="legend-swatch" style="background:#e9d8fd;border:1px solid #d6bcfa"></span> PENDIENTE AD - pendiente acto delegado</div>
 <div class="legend-item"><span class="legend-swatch" style="background:#6b46c1"></span> Trackline - evidencia blockchain registrada</div>
-<div class="legend-item"><span class="legend-swatch" style="background:#e2e8f0"></span> Documento fuente - que se necesita y quien lo genera</div>
+<div class="legend-item"><span class="legend-swatch" style="background:#faf5ff;border:2px solid #6b46c1"></span> Registro Central Art. 13 - campos obligatorios</div>
 </div>
 </div>
 <div id="dpp-root"></div>
 </main>
 <footer class="app-footer">
-DPP Mueble v0.2 - <a href="https://github.com/edupeter/dpp-furniture-passport" target="_blank">GitHub</a>
+DPP Mueble v0.3 - <a href="https://github.com/edupeter/dpp-furniture-passport" target="_blank">GitHub</a>
 - Evidencia: <a href="https://trackline.codecontract.com" target="_blank">Trackline by Code Contract S.L.</a>
-- Regulacion ESPR (UE) 2024/1781
+- Regulacion ESPR (UE) 2024/1781 - Registro Central Art. 13
 </footer>
 <script src="js/app.js"></script>
 <script>
 function loadSelected(){var s=document.getElementById('jsonFile');DPP.init(s.value,'dpp-root');}
-DPP.init('data/dpp.json','dpp-root');
+// Support ?id= URL parameter
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var id = params.get('id');
+  var sel = document.getElementById('jsonFile');
+  if (id === 'template' || id === 'plantilla') {
+    sel.value = 'data/dpp.json';
+  } else if (id) {
+    // Try to load data/{id}.json, fallback to hari example
+    sel.value = 'data/dpp-hari-example.json';
+  }
+  DPP.init(sel.value, 'dpp-root');
+})();
 </script>
 </body>
 </html>
